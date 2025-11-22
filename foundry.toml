@@ -11,9 +11,13 @@ fs_permissions = [
 ignored_warnings_from = [
     "src/wallet-mining/TransparentProxy.sol",
     "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol",
-    "src/curvy-puppet/ICryptoSwapPool.sol"
+    "src/curvy-puppet/ICryptoSwapPool.sol",
+    "src/curvy-puppet/**"
 ]
 bytecode_hash = "none"
 optimizer = true
 optimizer_runs = 200
+extra_output = ["storageLayout"]
 
+[lint]
+#exclude_lints = ["mixed-case-function", "mixed-case-variable"]
