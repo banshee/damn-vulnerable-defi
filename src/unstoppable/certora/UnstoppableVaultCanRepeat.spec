@@ -1,4 +1,5 @@
 using CallbackNoop as callbackReceiver;
+using SimpleToken as simpleToken;
 
 methods {
     // view
@@ -50,20 +51,33 @@ rule canDoTwoLoans() {
     env e;
     env e1;
 
-    address _token;
     uint256 amount;
     bytes data;
 
+    address asset = currentContract.asset;
     uint256 amount1;
     bytes data1;
 
     require(amount <= amount1);
 
-    flashLoan(e, callbackReceiver, _token, amount, data);
+    flashLoan(e, callbackReceiver, asset, amount, data);
 
     require (amount1 <= currentContract.maxFlashLoan(_token));
 
-    flashLoan@withrevert(e1, callbackReceiver, _token, amount1, data1);
+    flashLoan@withrevert(e1, callbackReceiver, asset, amount1, data1);
 
     assert(!lastReverted, "the second flash loan should not revert if the first one succeeded");
+}
+
+rule canDoALegalLoan() {
+    env e;
+    uint256 amount;
+    bytes data;
+    address asset = currentContract.asset;
+
+    require (amount <= currentContract.maxFlashLoan());
+
+    bool flashResult = flashLoan(e, callbackReceiver, asset, amount, data);
+
+    assert(flashResult, "flash loan should succeed for legal amounts");
 }
