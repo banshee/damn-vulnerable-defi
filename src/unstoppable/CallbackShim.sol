@@ -13,12 +13,10 @@ import {UnstoppableVault} from "./UnstoppableVault.sol";
  * An owner can pause the contract and execute arbitrary changes.
  */
 contract CallbackShim is IERC3156FlashBorrower, UnstoppableVaultCallbacks {
+    UnstoppableVault public immutable targetVault;
+
     bytes32 public constant RETURN_VALUE =
         keccak256("ERC3156FlashBorrower.onFlashLoan");
-
-    constructor(
-        UnstoppableVault _callingContract
-    ) UnstoppableVaultCallbacks(_callingContract) {}
 
     function onFlashLoan(
         address,
@@ -27,7 +25,7 @@ contract CallbackShim is IERC3156FlashBorrower, UnstoppableVaultCallbacks {
         uint256,
         bytes calldata
     ) external override returns (bytes32) {
-        doNCallbacks();
+        do0To3Callbacks(targetVault);
         return RETURN_VALUE;
     }
 }

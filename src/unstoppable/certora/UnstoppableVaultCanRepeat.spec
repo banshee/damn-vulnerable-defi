@@ -1,5 +1,8 @@
-using CallbackNoop as callbackReceiver;
+using CallbackShim as flashLoanReceiver;
 using SimpleToken as simpleToken;
+
+use builtin rule sanity;
+use builtin rule viewReentrancy;
 
 methods {
     // view
@@ -47,37 +50,29 @@ methods {
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256);
 }
 
-rule canDoTwoLoans() {
-    env e;
-    env e1;
+// ghost mapping(address => mapping(uint => uint)) ghostSLoad {
+//     init_state axiom forall address _executingContract. forall uint _slot. ghostSLoad[_executingContract][_slot] == 0;
+// }
 
-    uint256 amount;
-    bytes data;
+// // Reminder: executingContract is a built-in variable that points to the contract being analyzed
+// hook ALL_SLOAD(uint slot) uint val {
+//     ghostSLoad[executingContract][slot] = val;
+// }
 
-    address asset = currentContract.asset;
-    uint256 amount1;
-    bytes data1;
-
-    require(amount <= amount1);
-
-    flashLoan(e, callbackReceiver, asset, amount, data);
-
-    require (amount1 <= currentContract.maxFlashLoan(_token));
-
-    flashLoan@withrevert(e1, callbackReceiver, asset, amount1, data1);
-
-    assert(!lastReverted, "the second flash loan should not revert if the first one succeeded");
-}
-
-rule canDoALegalLoan() {
+rule canDoMultipleFlashLoans() {
     env e;
     uint256 amount;
     bytes data;
     address asset = currentContract.asset;
+    mathint maxFlashLoan = currentContract.maxFlashLoan(asset);
 
-    require (amount <= currentContract.maxFlashLoan());
+    require ((amount > 0) && (amount <= maxFlashLoan), "amount must be between 0 and maxFlashLoan");
 
-    bool flashResult = flashLoan(e, callbackReceiver, asset, amount, data);
+    require (flashLoanReceiver.targetVault == currentContract, "callbacks target the vault");
 
-    assert(flashResult, "flash loan should succeed for legal amounts");
+    bool flashResult1 = currentContract.flashLoan(e, flashLoanReceiver, asset, amount, data);
+    bool flashResult2 = currentContract.flashLoan(e, flashLoanReceiver, asset, amount, data);
+
+    assert(flashResult1, "first flash loan should succeed for legal amounts");
+    assert(flashResult2, "second flash loan should succeed for legal amounts");
 }
