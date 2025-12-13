@@ -47,12 +47,23 @@ methods {
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256);
 }
 
-rule isValidLoan() {
+// A valid loan must be less than or equal to the maxFlashLoan amount
+// The receiver must have enough balance to pay the fee
+// Note that an amount of 0 is considered a valid loan, but likely not useful
+function isValidLoan(env e, address v, uint256 amount, address receiver, address token) returns bool {
+    uint256 maxLoan = v.maxFlashLoan(e, token);
+    uint256 fee = v.flashFee(e, token, amount);
+    uint256 receiverBalance = token.balanceOf(e, receiver);
+    return amount <= maxLoan && receiverBalance >= fee;
+}
+
+rule isValidLoanR() {
     env e;
     address receiver;
     address token;
     uint256 amount;
+    bytes data;
 
-    currentContract.flashLoan(e, receiver, token, amount, "");
-    assert(isValidLoan(currentContract, amount, receiver, token), "loan should be valid");
+    currentContract.flashLoan(e, receiver, token, amount, data);
+    assert(isValidLoan(e, currentContract, amount, receiver, token), "loan should be valid");
 }
