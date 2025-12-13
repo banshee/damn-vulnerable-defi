@@ -5,14 +5,14 @@ pragma solidity =0.8.25;
 import {
     IERC3156FlashBorrower
 } from "@openzeppelin/contracts/interfaces/IERC3156.sol";
-import {UnstoppableVaultCallbacks} from "./UnstoppableVaultCallbacks.sol";
+import {Callback_UnstoppableVault} from "./Callback_UnstoppableVault.sol";
 import {UnstoppableVault} from "./UnstoppableVault.sol";
 
 /**
  * An ERC4626-compliant tokenized vault offering flashloans for a fee.
  * An owner can pause the contract and execute arbitrary changes.
  */
-contract CallbackShim is IERC3156FlashBorrower, UnstoppableVaultCallbacks {
+contract CallbackShim is IERC3156FlashBorrower, Callback_UnstoppableVault {
     UnstoppableVault public immutable targetVault;
 
     bytes32 public constant RETURN_VALUE =
@@ -25,7 +25,7 @@ contract CallbackShim is IERC3156FlashBorrower, UnstoppableVaultCallbacks {
         uint256,
         bytes calldata
     ) external override returns (bytes32) {
-        do0To3Callbacks(targetVault);
+        doCallback(targetVault);
         return RETURN_VALUE;
     }
 }

@@ -46,14 +46,6 @@ methods {
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256);
 }
 
-ghost mapping(address => mapping(uint => uint)) ghostSLoad {
-    init_state axiom forall address _executingContract. forall uint _slot. ghostSLoad[_executingContract][_slot] == 0;
-}
-
-hook ALL_SLOAD(uint slot) uint val {
-    ghostSLoad[executingContract][slot] = val;
-}
-
 rule exploreStuff() {
     bool doFlashLoan;
 
@@ -89,6 +81,7 @@ rule exploreStuff() {
     assert(lastReverted, "looking for a call that makes flashLoan revert");
 }
 
+define
 rule tryToStop() {
     bool doFlashLoan;
 
@@ -125,4 +118,13 @@ rule tryToStop() {
     secondCallIsValid = flashLoan@withrevert(e1, callbackReceiver, _token1, amount1, data1);
 
     assert(lastReverted, "looking for a call that makes flashLoan revert");
+}
+
+
+function abs_value_difference(uint256 x, uint256 y) returns uint256 {
+    if (x < y) {
+      return y - x;
+    } else {
+      return x - y;
+    }
 }

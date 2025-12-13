@@ -5,7 +5,7 @@ pragma solidity =0.8.25;
 import {
     IERC3156FlashBorrower
 } from "@openzeppelin/contracts/interfaces/IERC3156.sol";
-import {UnstoppableVaultCallbacks} from "./UnstoppableVaultCallbacks.sol";
+import {Callback_UnstoppableVault} from "./Callback_UnstoppableVault.sol";
 import {UnstoppableVault} from "./UnstoppableVault.sol";
 
 /**
