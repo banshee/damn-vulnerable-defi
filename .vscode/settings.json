@@ -1,0 +1,13 @@
+{
+  // 1. Compiler Version
+  "solidity.compileUsingRemoteVersion": "v0.8.25",
+
+  // 2. Dependency Paths
+  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.packageDefaultDependenciesDirectory": "lib",
+
+  "[solidity]": {
+    "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+  },
+  "solidity.formatter": "forge"
+}

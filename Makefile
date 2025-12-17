@@ -1,5 +1,5 @@
 certoraRun = time op run --env-file=$(HOME)/homedir/.env.1password -- mamba run -n certoraweb certoraRun
-compile_only = ${run} --compilation_steps_only
+compile_only = $(certoraRun) --compilation_steps_only
 runner_with_options = ${certoraRun} $(common_options)
 
 files = \
@@ -7,6 +7,7 @@ files = \
         "src/unstoppable/CallbackShim.sol" \
         "src/unstoppable/CallbackNoop.sol" \
         "src/unstoppable/SimpleToken.sol" \
+        "src/unstoppable/SimpleTokenWithCallToSafeTransferFrom.sol" \
 
 common_options = \
         --link UnstoppableVault:asset=SimpleToken \
@@ -19,6 +20,11 @@ common_options = \
         --rule_sanity basic
 
 isValidLoan:
+	${runner_with_options} $(files) \
+        --verify UnstoppableVault:src/unstoppable/certora/isValidLoan.spec \
+        --compilation_steps_only
+
+repro:
 	${runner_with_options} $(files) \
         --verify UnstoppableVault:src/unstoppable/certora/isValidLoan.spec \
         --compilation_steps_only
