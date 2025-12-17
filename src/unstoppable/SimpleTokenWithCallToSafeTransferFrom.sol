@@ -9,7 +9,8 @@ contract SimpleTokenWithCallToSafeTransferFrom is ERC20 {
         _mint(msg.sender, 1_000_000 ether);
     }
 
-    function reproSafeTransferFromHavoc(address from, address to, uint256 amount) public {
-        SafeTransferLib.safeTransferFrom(ERC20(this), from, to, amount);
+    function reproSafeTransferFromHavoc(address to, uint256 amount) public {
+        SafeTransferLib.safeTransfer(ERC20(this), to, amount);
+        // SafeTransferLib.safeTransferFrom(ERC20(this), from, to, amount);
     }
 }
