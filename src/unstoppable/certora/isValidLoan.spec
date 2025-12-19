@@ -8,10 +8,12 @@ methods {
     //     function FEE_FACTOR() external returns (uint256) envfree;
     //     function GRACE_PERIOD() external returns (uint64) envfree;
     //     function allowance(address, address) external returns (uint256) envfree;
-    //     function asset() external returns (address) envfree;
+    function UnstoppableVault.asset() external returns (address) envfree;
+
     //     function balanceOf(address) external returns (uint256) envfree;
     //     function convertToAssets(uint256 shares) external returns (uint256) envfree;
-    //     function convertToShares(uint256 assets) external returns (uint256) envfree;
+    function UnstoppableVault.convertToShares(uint256 assets) external returns (uint256) envfree;
+
     //     function decimals() external returns (uint8) envfree;
     //     function end() external returns (uint64) envfree;
     //     function feeRecipient() external returns (address) envfree;
@@ -30,8 +32,9 @@ methods {
     //     function previewRedeem(uint256 shares) external returns (uint256) envfree;
     //     function previewWithdraw(uint256 assets) external returns (uint256) envfree;
     //     function symbol() external returns (string) envfree;
-    //     function totalAssets() external returns (uint256) envfree;
-    //     function totalSupply() external returns (uint256) envfree;
+    function UnstoppableVault.totalAssets() external returns (uint256) envfree;
+
+    function UnstoppableVault.totalSupply() external returns (uint256) envfree;
 
     //     // nonpayable
     //     function approve(address spender, uint256 amount) external returns (bool);
@@ -44,29 +47,62 @@ methods {
     //     function setFeeRecipient(address _feeRecipient) external;
     //     function setPause(bool flag) external;
     function _.transfer(address to, uint256 amount) external => DISPATCHER(true);
-    //     function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    function _.transferFrom(address from, address to, uint256 amount) external => DISPATCHER(true);
+
     //     function transferOwnership(address newOwner) external;
     //     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256);
-    function _.onFlashLoan(address, address , uint256 , uint256, bytes) external => DISPATCHER(true);
+    function _.onFlashLoan(address, address, uint256, uint256, bytes) external => DISPATCHER(true);
 }
 
 // A valid loan must be less than or equal to the maxFlashLoan amount
 // The receiver must have enough balance to pay the fee
+// Note that this will often revert due to the use of the ReentrancyGuard library
 function isValidLoan(env e, address v, address _receiver, address _token, uint256 amount) returns bool {
     uint256 maxLoan = v.maxFlashLoan(e, _token);
     uint256 fee = v.flashFee(e, _token, amount);
     uint256 receiverBalance = _token.balanceOf(e, _receiver);
-    return amount <= maxLoan && receiverBalance >= fee;
+    bool balancedSharesAndAssets = v.convertToShares(e, v.totalSupply(e)) == v.totalAssets(e);
+    return balancedSharesAndAssets && amount > 0 && amount <= maxLoan && receiverBalance >= fee;
+}
+
+function safeIsValidLoan(env e, address v, address _receiver, address _token, uint256 amount) returns bool {
+    bool result = isValidLoan@withrevert(e, v, _receiver, _token, amount);
+    return lastReverted ? false : result;
+}
+
+function isOrderedEnvs(env e1, env e2) returns bool {
+    return (e1.block.number < e2.block.number && e1.block.timestamp < e2.block.timestamp) || 
+           (e1.block.number == e2.block.number && e1.block.timestamp == e2.block.timestamp) || 
+           false;
 }
 
 rule isValidLoan() {
     env e;
     uint256 amount;
-    address asset;
+    address asset = currentContract.asset();
     bytes data;
 
-    bool validLoan = isValidLoan(e, currentContract, receiver, currentContract.asset(), amount);
-    currentContract.flashLoan(e, receiver, currentContract.asset(), amount, data);
-    assert(validLoan, "loan should be valid");
-    // assert(false, "should fail, want to make sure it works at all");
+    bool validLoan = safeIsValidLoan(e, currentContract, receiver, asset, amount);
+    currentContract.flashLoan@withrevert(e, receiver, asset, amount, data);
+    assert(validLoan <=> !lastReverted, "either an invalid loan reverted or a valid loan succeeded");
+}
+
+rule someCallCanStopLoans() {
+    env e1;
+    env e2;
+    uint256 amount;
+    address asset = currentContract.asset();
+    bytes data;
+
+    require(e1.msg.sender != e2.msg.sender, "e and e1 must be different senders");
+    require(isOrderedEnvs(e1, e2), "e1 must be before or same as e2");
+
+    // Make all possible calls to the vault, looking for a call that stops future loans
+    method f;
+    calldataarg args;
+    currentContract.f(e1, args);
+
+    bool validLoan = safeIsValidLoan(e2, currentContract, receiver, asset, amount);
+    currentContract.flashLoan@withrevert(e2, receiver, asset, amount, data);
+    assert(validLoan <=> !lastReverted, "either an invalid loan reverted or a valid loan succeeded");
 }

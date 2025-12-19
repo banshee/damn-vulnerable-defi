@@ -76,7 +76,7 @@ contract UnstoppableChallenge is Test {
         assertEq(vault.owner(), address(monitorContract));
 
         // Vault is not paused
-        assertFalse(vault.paused());
+        assertFalse(vault.paused(), "vault is not paused");
 
         // Cannot pause the vault
         vm.expectRevert("UNAUTHORIZED");
