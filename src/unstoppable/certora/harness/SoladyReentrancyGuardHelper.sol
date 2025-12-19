@@ -9,5 +9,9 @@ contract SoladyReentrancyGuardHelper {
         // Call the library function directly
         return SoladyReentrancyGuardHelperLib.isLocked();
     }
-}
 
+    function getSoladyReentrancyGuard() external view returns (uint256) {
+        // Call the library function directly
+        return SoladyReentrancyGuardHelperLib.getReentrancyGuardStatus();
+    }
+}

@@ -40,10 +40,14 @@ contract ContractBTest is Test {
 
     function test_WithHelper_reentrantLock() public {
         WithHelper helper = new WithHelper();
+        assertEq(helper.getSoladyReentrancyGuard(), 0);
+        bytes memory bytecode = vm.getCode("sample.t.sol:WithHelper");
+        uint256 codeSize = bytecode.length;
         assertTrue(
             helper.lockShouldBeTrue(),
             "Lock should be true inside reentrant code"
         );
+        assertEq(helper.getSoladyReentrancyGuard(), codeSize);
     }
 
     function test_WithHelper_nonReentrantLock() public {

@@ -4,6 +4,7 @@ runner_with_options = ${certoraRun} $(common_options) $(if $(COMPILE_ONLY),--com
 
 files = \
         "src/unstoppable/UnstoppableVault.sol" \
+        "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" \
         "src/unstoppable/CallbackNoop.sol" \
         "src/unstoppable/SimpleToken.sol" \
 
@@ -11,12 +12,17 @@ common_options = \
         --link UnstoppableVault:asset=SimpleToken \
         --solc solc8.25 \
         --solc_allow_path src \
-        --rule isValidLoan \
         --rule_sanity basic \
-#         --wait_for_results all \
+        --optimistic_loop \
+        --wait_for_results all
+
+x:
+	${runner_with_options} $(files) \
+        --verify UnstoppableVault_Harness:src/unstoppable/certora/x.spec \
 
 isValidLoan:
 	${runner_with_options} $(files) \
+        --rule isValidLoan \
         --verify UnstoppableVault:src/unstoppable/certora/isValidLoan.spec \
 
 safeTransferFrom:
