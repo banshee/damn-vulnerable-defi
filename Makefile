@@ -5,6 +5,8 @@ runner_with_options = ${certoraRun} $(common_options) $(if $(COMPILE_ONLY),--com
 files = \
         "src/unstoppable/UnstoppableVault.sol" \
         "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" \
+        "src/unstoppable/certora/harness/SimpleRe.sol" \
+        "src/unstoppable/certora/harness/ReentrancyGuardDemo.sol" \
         "src/unstoppable/CallbackNoop.sol" \
         "src/unstoppable/SimpleToken.sol" \
 
@@ -14,11 +16,16 @@ common_options = \
         --solc_allow_path src \
         --rule_sanity basic \
         --optimistic_loop \
+        --prover_args '-enableStorageSplitting false' \
         --wait_for_results all
 
 x:
 	${runner_with_options} $(files) \
-        --verify UnstoppableVault_Harness:src/unstoppable/certora/x.spec \
+        --verify SimpleRe:src/unstoppable/certora/x.spec \
+
+rdemo:
+	${runner_with_options} $(files) \
+        --verify ReentrancyGuardDemo:src/unstoppable/certora/rdemo.spec \
 
 isValidLoan:
 	${runner_with_options} $(files) \

@@ -7,10 +7,13 @@ import {SoladyReentrancyGuardHelperLib} from "src/unstoppable/certora/harness/li
 import {SoladyReentrancyGuardHelper} from "src/unstoppable/certora/harness/SoladyReentrancyGuardHelper.sol";
 import {ReentrancyGuard} from "solady/utils/ReentrancyGuard.sol";
 import {UnstoppableVault_Harness} from "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol";
+import {SimpleRe} from "src/unstoppable/certora/harness/SimpleRe.sol";
 import {UnstoppableVault} from "src/unstoppable/UnstoppableVault.sol";
 import {SafeTransferLib, ERC4626, ERC20} from "solmate/tokens/ERC4626.sol";
 
 contract WithHelper is SoladyReentrancyGuardHelper, ReentrancyGuard {
+    uint256 lastLock;
+
     function lockShouldBeTrue() external nonReentrant returns (bool) {
         // This will be true because we are inside nonReentrant
         return SoladyReentrancyGuardHelperLib.isLocked();
@@ -20,17 +23,23 @@ contract WithHelper is SoladyReentrancyGuardHelper, ReentrancyGuard {
         // This will be false because we are not inside nonReentrant
         return SoladyReentrancyGuardHelperLib.isLocked();
     }
+
+    function lockValue() external nonReentrant returns (uint256) {
+        // This will be true because we are inside nonReentrant
+        lastLock = SoladyReentrancyGuardHelperLib.getReentrancyGuardValue();
+        return lastLock;
+    }
 }
 
-contract ContractBTest is Test {
-    uint256 testNumber;
+contract ReentrantGuard is Test {
+    function setUp() public {}
 
-    function setUp() public {
-        testNumber = 42;
-    }
-
-    function test_NumberIs42() public view {
-        assertEq(testNumber, 42);
+    function test_shark() public {
+        SimpleRe helper = new SimpleRe();
+        assertFalse(helper.isLockedBySoladyReentrancyGuard());
+        assertEq(helper.getCodesize(), 385, "huhwhat");
+        assertTrue(helper.shark(), "huhwhat");
+        assertFalse(helper.isLockedBySoladyReentrancyGuard());
     }
 
     function test_WithHelper_isLocked() public {
@@ -41,13 +50,17 @@ contract ContractBTest is Test {
     function test_WithHelper_reentrantLock() public {
         WithHelper helper = new WithHelper();
         assertEq(helper.getSoladyReentrancyGuard(), 0);
-        bytes memory bytecode = vm.getCode("sample.t.sol:WithHelper");
+        bytes memory bytecode = vm.getDeployedCode("sample.t.sol:WithHelper");
         uint256 codeSize = bytecode.length;
         assertTrue(
             helper.lockShouldBeTrue(),
             "Lock should be true inside reentrant code"
         );
-        assertEq(helper.getSoladyReentrancyGuard(), codeSize);
+        assertEq(
+            helper.getSoladyReentrancyGuard(),
+            codeSize,
+            "guard shall be codeSize"
+        );
     }
 
     function test_WithHelper_nonReentrantLock() public {
