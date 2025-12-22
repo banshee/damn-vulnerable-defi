@@ -6,7 +6,6 @@ files = \
         "src/unstoppable/UnstoppableVault.sol" \
         "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" \
         "src/unstoppable/certora/harness/ReentrancyGuardDemo.sol" \
-        "src/unstoppable/certora/harness/SmallContract.sol" \
         "src/unstoppable/CallbackNoop.sol" \
         "src/unstoppable/SimpleToken.sol" \
 
@@ -32,7 +31,7 @@ s:
 rdemo:
 	${runner_with_options} $(files) \
         --verify ReentrancyGuardDemo:src/unstoppable/certora/rdemo.spec \
-        --parametric_contracts ReentrancyGuardDemo SmallContract
+        --parametric_contracts ReentrancyGuardDemo
 
 isValidLoan:
 	${runner_with_options} $(files) \

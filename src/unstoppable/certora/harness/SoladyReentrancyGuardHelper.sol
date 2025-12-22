@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import {SoladyReentrancyGuardHelperLib} from "src/unstoppable/certora/harness/lib/SoladyReentrancyGuardHelperLib.sol";
 // import {ReentrancyGuard} from "solady/utils/ReentrancyGuard.sol";
 
-contract SoladyReentrancyGuardHelper {
+abstract contract SoladyReentrancyGuardHelper {
     /// @dev The specific storage slot used by Solady's ReentrancyGuard.
     /// Value: 0x929eee149b4bd21268
     uint256 internal constant _REENTRANCY_GUARD_SLOT = 0x929eee149b4bd21268;
