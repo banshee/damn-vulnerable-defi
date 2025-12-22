@@ -10,8 +10,13 @@ import "storageGhost.spec";
 // }
 
 function lockStateIsValid() returns (bool) {
-  return currentContract.getSoladyCodesize() != assert_uint256(currentContract) && !isLockedBySoladyReentrancyGuard();
+    return currentContract.getSoladyCodesize() != assert_uint256(currentContract) && !isLockedBySoladyReentrancyGuard();
 }
 
-invariant reentracyLockIsUnlockedAtStartAndEnd()
-    lockStateIsValid();
+invariant reentracyLockIsUnlocked()
+    lockStateIsValid()
+    {
+        preserved constructor() {
+            require(lockStateIsValid(), "constructor has to have CODESIZE different from address");
+        }
+    }

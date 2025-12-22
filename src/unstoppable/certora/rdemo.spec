@@ -1,4 +1,4 @@
-// import "SoladyReentrancyGuardHelper.spec";
+import "SoladyReentrancyGuardHelper.spec";
 import "SimpleTokenDispatch.spec";
 
 methods {
@@ -13,5 +13,4 @@ methods {
     function ReentrancyGuardDemo.shark() external returns (bool) envfree;
 }
 
-invariant reentracyLockIsUnlockedAtStartAndEnd()
-    !currentContract.isLockedBySoladyReentrancyGuard();
+use invariant reentracyLockIsUnlocked;

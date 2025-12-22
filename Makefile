@@ -27,7 +27,7 @@ common_options = \
 rdemo:
 	${runner_with_options} $(files) \
         --verify ReentrancyGuardDemo:src/unstoppable/certora/rdemo.spec \
-#         --parametric_contracts ReentrancyGuardDemo
+        --parametric_contracts ReentrancyGuardDemo
 
 s:
 	${runner_with_options} $(files) \
