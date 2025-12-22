@@ -14,9 +14,4 @@ function lockStateIsValid() returns (bool) {
 }
 
 invariant reentracyLockIsUnlockedAtStartAndEnd()
-    lockStateIsValid()
-    {
-        preserved constructor() {
-            require(lockStateIsValid(), "must start out unlocked");
-        }
-    }
+    lockStateIsValid();

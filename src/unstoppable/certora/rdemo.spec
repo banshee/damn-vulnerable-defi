@@ -1,12 +1,17 @@
-import "SoladyReentrancyGuardHelper.spec";
+// import "SoladyReentrancyGuardHelper.spec";
+import "SimpleTokenDispatch.spec";
 
 methods {
+    // pure
     function ReentrancyGuardDemo.getSoladyCodesize() external returns (uint256) envfree;
-    function ReentrancyGuardDemo.shark() external returns (bool) envfree;
 
     // view
     function ReentrancyGuardDemo.getSoladyReentrancyGuardValue() external returns (uint256) envfree;
     function ReentrancyGuardDemo.isLockedBySoladyReentrancyGuard() external returns (bool) envfree;
+
+    // nonpayable
+    function ReentrancyGuardDemo.shark() external returns (bool) envfree;
 }
 
-use invariant reentracyLockIsUnlockedAtStartAndEnd;
+invariant reentracyLockIsUnlockedAtStartAndEnd()
+    !currentContract.isLockedBySoladyReentrancyGuard();
