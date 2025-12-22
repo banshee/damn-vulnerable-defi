@@ -1,5 +1,4 @@
 import "SoladyReentrancyGuardHelper.spec";
-import "SimpleTokenDispatch.spec";
 
 methods {
     // pure
