@@ -70,7 +70,11 @@ contract ReentrancyGuardDemo {
     /// @dev Returns the raw value stored in the guard slot.
     /// Unlocked = contract codesize
     /// Locked = contract address
-    function getSoladyReentrancyGuardValue() external view returns (uint256 status) {
+    function getSoladyReentrancyGuardValue()
+        external
+        view
+        returns (uint256 status)
+    {
         assembly {
             status := sload(_REENTRANCY_GUARD_SLOT)
         }
@@ -81,8 +85,7 @@ contract ReentrancyGuardDemo {
         returns (uint256 previousValue)
     {
         // We just need a value that isn't the same as the contract's address.
-        uint256 a = uint256(uint160(address(this)));
-        uint256 v = a == type(uint256).max ? a - 1 : a + 1;
+        uint256 v = uint256(uint160(address(this)));
         assembly {
             previousValue := sload(_REENTRANCY_GUARD_SLOT)
             sstore(_REENTRANCY_GUARD_SLOT, v)
@@ -93,7 +96,8 @@ contract ReentrancyGuardDemo {
     function isLocked() public view returns (bool) {
         // Solady sets the slot to address(this) when locked.
         return
-            this.getSoladyReentrancyGuardValue() == uint256(uint160(address(this)));
+            this.getSoladyReentrancyGuardValue() ==
+            uint256(uint160(address(this)));
     }
 
     function shark() external nonReentrant returns (bool) {
