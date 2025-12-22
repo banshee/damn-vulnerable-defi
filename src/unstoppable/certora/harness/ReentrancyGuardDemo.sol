@@ -8,9 +8,19 @@ pragma solidity ^0.8.4;
 // guard value is either contract codesize (unlocked) or contract address (locked), or zero (uninitialized)
 contract ReentrancyGuardDemo {
     event EnterNonReentrant(address thisContract, uint256 startingValue);
-    event ExitNonReentrant(address thisContract, uint256 startingValue, uint256 endingValue);
+    event ExitNonReentrant(
+        address thisContract,
+        uint256 startingValue,
+        uint256 endingValue
+    );
 
     uint256 public guardValueInsideCall;
+
+    uint256 setByConstructor;
+
+    constructor() {
+        setByConstructor = setSoladyReentrancyGuardValue();
+    }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                       CUSTOM ERRORS                        */
@@ -60,20 +70,34 @@ contract ReentrancyGuardDemo {
     /// @dev Returns the raw value stored in the guard slot.
     /// Unlocked = contract codesize
     /// Locked = contract address
-    function getReentrancyGuardValue() external view returns (uint256 status) {
+    function getSoladyReentrancyGuardValue() external view returns (uint256 status) {
         assembly {
             status := sload(_REENTRANCY_GUARD_SLOT)
+        }
+    }
+
+    function setSoladyReentrancyGuardValue()
+        internal
+        returns (uint256 previousValue)
+    {
+        // We just need a value that isn't the same as the contract's address.
+        uint256 a = uint256(uint160(address(this)));
+        uint256 v = a == type(uint256).max ? a - 1 : a + 1;
+        assembly {
+            previousValue := sload(_REENTRANCY_GUARD_SLOT)
+            sstore(_REENTRANCY_GUARD_SLOT, v)
         }
     }
 
     /// @dev Helper to return a boolean indicating if the contract is currently locked.
     function isLocked() public view returns (bool) {
         // Solady sets the slot to address(this) when locked.
-        return this.getReentrancyGuardValue() == uint256(uint160(address(this)));
+        return
+            this.getSoladyReentrancyGuardValue() == uint256(uint160(address(this)));
     }
 
-    function shark() external nonReentrant returns (bool){
-        guardValueInsideCall = this.getReentrancyGuardValue();
+    function shark() external nonReentrant returns (bool) {
+        guardValueInsideCall = this.getSoladyReentrancyGuardValue();
         return true;
     }
 

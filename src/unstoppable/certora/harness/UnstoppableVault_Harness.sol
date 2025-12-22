@@ -15,9 +15,13 @@ import {SoladyReentrancyGuardHelper} from "src/unstoppable/certora/harness/Solad
  * An ERC4626-compliant tokenized vault offering flashloans for a fee.
  * An owner can pause the contract and execute arbitrary changes.
  */
-contract UnstoppableVault_Harness is UnstoppableVault, SoladyReentrancyGuardHelper {
-    constructor(ERC20 _token, address _owner, address _feeRecipient)
-       UnstoppableVault(_token, _owner, _feeRecipient)
-    {
-    }
+contract UnstoppableVault_Harness is
+    UnstoppableVault,
+    SoladyReentrancyGuardHelper
+{
+    constructor(
+        ERC20 _token,
+        address _owner,
+        address _feeRecipient
+    ) nonReentrant UnstoppableVault(_token, _owner, _feeRecipient) {}
 }

@@ -35,5 +35,11 @@
     "v2-periphery/=lib/v2-periphery/contracts/",
     "v3-core/=lib/v3-core/contracts/",
     "v3-periphery/=lib/v3-periphery/contracts/"
-  ]
+  ],
+  "search.exclude": {
+    "**/.certora_internal": true,
+  },
+  "files.exclude": {
+    "**/.certora_internal": true,
+  },
 }

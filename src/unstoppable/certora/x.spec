@@ -1,28 +1,22 @@
 import "storageGhost.spec";
 
 methods {
-    function _.decimals() external => DISPATCH(optimistic=true)[SimpleToken._];
+    function _.decimals() external => DISPATCH(optimistic=true)[SimpleToken.decimals()];
     function _.balanceOf(address) external => DISPATCH(optimistic=true)[SimpleToken._];
     function _.transfer(address to, uint256 amount) external => DISPATCH(optimistic=true)[SimpleToken._];
     function _.transferFrom(address from, address to, uint256 amount) external => DISPATCH(optimistic=true)[SimpleToken._];
     function _.approve(address spender, uint256 amount) external => DISPATCH(optimistic=true)[SimpleToken._];
     function UnstoppableVault_Harness.isLockedBySoladyReentrancyGuard() external returns (bool) envfree;
-    function SimpleRe.isLockedBySoladyReentrancyGuard() external returns (bool) envfree;
-    function SimpleRe.shark() external returns (bool) envfree;
-    function SimpleRe.getCodesize() external returns (uint256) envfree;
 }
 
 // invariant reentracyAlwaysResets()
 //     !isLockedBySoladyReentrancyGuard();
 
 rule x() {
-    require(!isLockedBySoladyReentrancyGuard(), "cannot start in a locked state");
     require(currentContract.getCodesize() != assert_uint256(currentContract), "codesize and the contract address cant be the same");
+    require(!isLockedBySoladyReentrancyGuard(), "cannot start in a locked state");
 
-    // env e;
-    // calldataarg args;
-    bool result = currentContract.shark(); 
-    assert(result, "shark must be true");
+    assert(currentContract.shark(), "shark must be true");
 
     assert(!isLockedBySoladyReentrancyGuard(), "cannot end in a locked state");
 }

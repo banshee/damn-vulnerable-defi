@@ -5,13 +5,14 @@ runner_with_options = ${certoraRun} $(common_options) $(if $(COMPILE_ONLY),--com
 files = \
         "src/unstoppable/UnstoppableVault.sol" \
         "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" \
-        "src/unstoppable/certora/harness/SimpleRe.sol" \
         "src/unstoppable/certora/harness/ReentrancyGuardDemo.sol" \
+        "src/unstoppable/certora/harness/SmallContract.sol" \
         "src/unstoppable/CallbackNoop.sol" \
         "src/unstoppable/SimpleToken.sol" \
 
 common_options = \
         --link UnstoppableVault:asset=SimpleToken \
+        --build_cache \
         --solc solc8.25 \
         --solc_allow_path src \
         --rule_sanity basic \
@@ -19,13 +20,19 @@ common_options = \
         --prover_args '-enableStorageSplitting false' \
         --wait_for_results all
 
-x:
-	${runner_with_options} $(files) \
-        --verify SimpleRe:src/unstoppable/certora/x.spec \
+# x:
+# 	${runner_with_options} $(files) \
+#         --verify SimpleRe:src/unstoppable/certora/x.spec \
 
+s:
+	${runner_with_options} $(files) \
+        --verify UnstoppableVault_Harness:src/unstoppable/certora/SoladyReentrantGuard.spec \
+        --parametric_contracts UnstoppableVault_Harness
+        
 rdemo:
 	${runner_with_options} $(files) \
         --verify ReentrancyGuardDemo:src/unstoppable/certora/rdemo.spec \
+        --parametric_contracts ReentrancyGuardDemo SmallContract
 
 isValidLoan:
 	${runner_with_options} $(files) \
