@@ -1,10 +1,22 @@
 import "storageGhost.spec";
 
+// methods {
+//     // pure
+//     function SoladyReentrancyGuardHelper.getSoladyCodesize() external returns (uint256) envfree;
+
+//     // view
+//     function SoladyReentrancyGuardHelper.getSoladyReentrancyGuardValue() external returns (uint256) envfree;
+//     function SoladyReentrancyGuardHelper.isLockedBySoladyReentrancyGuard() external returns (bool) envfree;
+// }
+
+function lockStateIsValid() returns (bool) {
+  return currentContract.getSoladyCodesize() != assert_uint256(currentContract) && !isLockedBySoladyReentrancyGuard();
+}
+
 invariant reentracyLockIsUnlockedAtStartAndEnd()
-    currentContract.getSoladyCodesize() != assert_uint256(currentContract) && (!(getSoladyReentrancyGuardValue() == assert_uint256(currentContract)))
+    lockStateIsValid()
     {
         preserved constructor() {
-            require(currentContract.getSoladyCodesize() != assert_uint256(currentContract), "guard won't work if codesize is the same as address");
-            require(currentContract.getSoladyReentrancyGuardValue() == 0, "guard must be zero at startup");
+            require(lockStateIsValid(), "must start out unlocked");
         }
     }

@@ -23,16 +23,16 @@ common_options = \
 # 	${runner_with_options} $(files) \
 #         --verify SimpleRe:src/unstoppable/certora/x.spec \
 
-s:
-	${runner_with_options} $(files) \
-        --verify UnstoppableVault_Harness:src/unstoppable/certora/SoladyReentrantGuard.spec \
-        --parametric_contracts UnstoppableVault_Harness
-        
 rdemo:
 	${runner_with_options} $(files) \
         --verify ReentrancyGuardDemo:src/unstoppable/certora/rdemo.spec \
         --parametric_contracts ReentrancyGuardDemo
 
+s:
+	${runner_with_options} $(files) \
+        --verify UnstoppableVault_Harness:src/unstoppable/certora/SoladyReentrantGuard.spec \
+        --parametric_contracts UnstoppableVault_Harness
+        
 isValidLoan:
 	${runner_with_options} $(files) \
         --rule isValidLoan \
