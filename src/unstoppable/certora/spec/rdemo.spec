@@ -9,7 +9,7 @@ methods {
     function ReentrancyGuardDemo.isLockedBySoladyReentrancyGuard() external returns (bool) envfree;
 
     // nonpayable
-    function ReentrancyGuardDemo.shark() external returns (bool) envfree;
+    function ReentrancyGuardDemo.shark() external returns (uint256) envfree;
 }
 
 use invariant reentracyLockIsUnlocked;

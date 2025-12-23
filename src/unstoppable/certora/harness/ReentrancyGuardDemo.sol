@@ -9,8 +9,9 @@ import {SoladyReentrancyGuardHelper} from "./SoladyReentrancyGuardHelper.sol";
 
 // guard value is either contract codesize (unlocked) or contract address (locked), or zero (uninitialized)
 contract ReentrancyGuardDemo is SoladyReentrancyGuardHelper {
-    bool someValue;
-    function shark() public returns (bool){
+    uint256 someValue;
+    function shark() public returns (uint256){
+        someValue = someValue + 1;
         return someValue;
     }
 }

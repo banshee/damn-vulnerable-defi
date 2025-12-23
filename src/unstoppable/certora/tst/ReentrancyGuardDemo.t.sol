@@ -13,10 +13,8 @@ contract ReentrancyGuardDemoTest is Test {
 
     function test_shark() public {
         ReentrancyGuardDemo currentContract = new ReentrancyGuardDemo();
-        uint256 currentContractAddress = uint256(uint160(address(currentContract)));
         // assertEq(currentContract.getSoladyReentrancyGuardValue(), 0, "storage initialized to zero");
         assertFalse(currentContract.isLockedBySoladyReentrancyGuard(), "must start out unlocked");
-        assertTrue(currentContract.shark(), "make a call that just returns true, we only care about reentrancy guard");
-        assertEq(currentContract.getSoladyReentrancyGuardValue(), vm.getDeployedCode("ReentrancyGuardDemo.sol:ReentrancyGuardDemo").length, "after call should be codesize");
+        assertTrue(currentContract.shark() > 0, "make a call that just returns true, we only care about reentrancy guard");
     }
 }

@@ -16,7 +16,7 @@ rule x() {
     require(currentContract.getCodesize() != assert_uint256(currentContract), "codesize and the contract address cant be the same");
     require(!isLockedBySoladyReentrancyGuard(), "cannot start in a locked state");
 
-    assert(currentContract.shark(), "shark must be true");
+    assert(currentContract.shark() > 0, "shark must be gt 0");
 
     assert(!isLockedBySoladyReentrancyGuard(), "cannot end in a locked state");
 }

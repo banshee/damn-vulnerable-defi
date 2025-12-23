@@ -6,7 +6,7 @@ files = \
         "src/unstoppable/UnstoppableVault.sol" \
         "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" \
         "src/unstoppable/certora/harness/ReentrancyGuardDemo.sol" \
-        "src/unstoppable/CallbackNoop.sol" \
+        "src/unstoppable/certora/harness/CallbackNoop.sol" \
         "src/unstoppable/SimpleToken.sol" \
 
 common_options = \

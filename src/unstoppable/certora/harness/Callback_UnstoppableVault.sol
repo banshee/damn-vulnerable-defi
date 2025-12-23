@@ -1,9 +1,9 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity =0.8.25;
 
 import {UnstoppableVault} from "./UnstoppableVault.sol";
-import {
-    IERC3156FlashBorrower
-} from "@openzeppelin/contracts/interfaces/IERC3156.sol";
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156.sol";
 
 contract Callback_UnstoppableVault {
     uint256 iteration;
@@ -21,8 +21,13 @@ contract Callback_UnstoppableVault {
 
     mapping(uint256 => uint8) parameters_uint8;
 
-    function doCallback(UnstoppableVault callingContract) public {
-        uint8 functionId = functionIds[iteration++] % 13;
+    function doCallback(
+        UnstoppableVault callingContract,
+        IERC3156FlashBorrower flashBorrower
+    ) public {
+        // Note that function count is one greater than the number of functions
+        // so this function can be a noop
+        uint8 functionId = functionIds[iteration++] % 14;
 
         if (functionId == 0) {
             callingContract.approve(
@@ -41,7 +46,7 @@ contract Callback_UnstoppableVault {
             );
         } else if (functionId == 3) {
             callingContract.flashLoan(
-                IERC3156FlashBorrower(parameters_address[iteration++]),
+                flashBorrower,
                 parameters_address[iteration++],
                 parameters_uint256[iteration++],
                 parameters_bytes[iteration++]
@@ -93,8 +98,8 @@ contract Callback_UnstoppableVault {
         }
     }
 
-    function do2Callbacks(UnstoppableVault callingContract) public {
-        doCallback(callingContract);
-        doCallback(callingContract);
+    function do2Callbacks(UnstoppableVault callingContract, IERC3156FlashBorrower flashBorrower) public {
+        doCallback(callingContract, flashBorrower);
+        doCallback(callingContract, flashBorrower);
     }
 }
