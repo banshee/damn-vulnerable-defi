@@ -57,10 +57,9 @@ methods {
 
     function _.onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes data) external => DISPATCH(optimistic=true)[CallbackNoop.onFlashLoan(address, address, uint256, uint256, bytes)];
 
-    function CallbackNoop.expectedFee() external returns (uint256) envfree;
+    function CallbackNoop.receivedFee() external returns (uint256) envfree;
 }
 
-use invariant reentracyLockIsUnlocked;
 definition MAX_UINT256() returns uint256 = 0xffffffffffffffffffffffffffffffff;
 
 function simpleVault() returns (bool) {
@@ -71,17 +70,11 @@ function simpleVault() returns (bool) {
     return true;
 }
 
-// flashFee: _amount.mulWadUp(FEE_FACTOR)
-// convertToShares assets.mulDivDown(totalSupply(), totalAssets())
-
-// A valid loan must be less than or equal to the maxFlashLoan amount
-// The receiver must have enough balance to pay the fee
-// Note that this will often revert due to the use of the ReentrancyGuard library
 function isValidLoan(env e, address v, address _receiver, address _token, uint256 amount) returns bool {
     requireInvariant(reentracyLockIsUnlocked);
     require (vaultWithHarness == v);
-    // To simplify, prevent the balance of the fee recipient overflowing.
-    if (amount == 0 || e.msg.sender == 0 || e.msg.value  != 0 || vaultWithHarness.asset() != _token) {
+
+    if (amount == 0 || e.msg.value  != 0 || vaultWithHarness.asset() != _token) {
         return false;
     }
     uint256 maxLoan = vaultWithHarness.maxFlashLoan@withrevert(e, _token);
@@ -114,60 +107,55 @@ function isValidLoan(env e, address v, address _receiver, address _token, uint25
     return balancedSharesAndAssets;
 }
 
-function safeIsValidLoan(env e, address v, address _receiver, address _token, uint256 amount) returns bool {
-    bool result = isValidLoan@withrevert(e, v, _receiver, _token, amount);
-    return lastReverted ? false : result;
-}
-
-rule isValidLoan() {
-    require (simpleVault());
-
-    env e;
-    uint256 amount;
-    address asset = currentContract.asset();
-    bytes data;
-    
+function balancesInScope(uint256 amount) returns (bool) {
+    // checking for maxint overflow is out-of-scope, so just make
+    // sure nothing comes very close
     mathint m = MAX_UINT256() / 16;    
     require (st.balanceOf(loanReceiver) < m);
     require (st.balanceOf(currentContract) < m);
     require (st.balanceOf(currentContract.feeRecipient()) < m);
-    require (amount < m);
+    require (amount > 0 && amount < m);
+
+    return true;
+}
+
+rule isValidLoan() {
+    simpleVault();
+
+    env e;
+    uint256 amount;
+    address asset;
+    bytes data;
+    
+    require(balancesInScope(amount));
+
+    bool validLoan = isValidLoan(e, currentContract, loanReceiver, asset, amount);
+    currentContract.flashLoan@withrevert(e, loanReceiver, asset, amount, data);
+    assert(validLoan <=> !lastReverted, "a valid loan never reverts and an invalid loan always reverts");
+    // assert(!validLoan => lastReverted, "an invalid loan always reverts");
+}
+
+rule validate_flashFeeAdjustedForBug() {
+    env e;
+    uint256 amount;
+    address asset;
+    bytes data;
+
+    require(balancesInScope(amount));
 
     uint256 fee = vaultWithHarness.flashFeeAdjustedForBug@withrevert(e, asset, amount);
-    require (loanReceiver.expectedFee() == fee);
-    require(amount > 0 && e.msg.sender != 0 && e.msg.value  == 0);
-    bool validLoan = safeIsValidLoan(e, currentContract, loanReceiver, asset, amount);
-    currentContract.flashLoan@withrevert(e, loanReceiver, asset, amount, data);
-    assert(validLoan => !lastReverted, "a valid loan never reverts");
-    assert(!validLoan => lastReverted, "an invalid loan always reverts");
+    bool flashFeeAdjustedForBugReverted = lastReverted;
+    currentContract.flashLoan(e, loanReceiver, asset, amount, data);
+    assert(!flashFeeAdjustedForBugReverted, "if the loan worked flashFeeAdjustedForBug must also work");
+    assert(fee == loanReceiver.receivedFee(), "fees must match");
 }
 
 rule isValidLoanNeverReverts() {
     env e;
     uint256 amount;
-    address asset = currentContract.asset();
+    address asset;
     bytes data;
 
     bool validLoan = isValidLoan@withrevert(e, currentContract, loanReceiver, asset, amount);
-    assert(!lastReverted, "isValidLoan should never revert");
+    assert(!lastReverted, "isValidLoan never reverts");
 }
-
-// rule someCallCanStopLoans() {
-//     env e1;
-//     env e2;
-//     uint256 amount;
-//     address asset = currentContract.asset();
-//     bytes data;
-
-//     require(e1.msg.sender != e2.msg.sender, "e and e1 must be different senders");
-//     require(isOrderedEnvs(e1, e2), "e1 must be before or same as e2");
-
-//     // Make all possible calls to the vault, looking for a call that stops future loans
-//     method f;
-//     calldataarg args;
-//     currentContract.f(e1, args);
-
-//     bool validLoan = safeIsValidLoan(e2, currentContract, receiver, asset, amount);
-//     currentContract.flashLoan@withrevert(e2, receiver, asset, amount, data);
-//     assert(validLoan <=> !lastReverted, "either an invalid loan reverted or a valid loan succeeded");
-// }
