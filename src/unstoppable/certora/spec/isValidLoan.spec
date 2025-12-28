@@ -1,6 +1,5 @@
 import "SimpleTokenDispatch.spec";
 import "SoladyReentrancyGuardHelper.spec";
-using CallbackNoop as loanReceiver;
 using UnstoppableVault_Harness as vaultWithHarness;
 using SimpleToken as st;
 
@@ -20,6 +19,7 @@ methods {
     // function UnstoppableVault_Harness.flashFee(address _token, uint256 _amount) external returns (uint256) envfree;
     function UnstoppableVault_Harness.getSoladyReentrancyGuardValue() external returns (uint256) envfree;
     function UnstoppableVault_Harness.isLockedBySoladyReentrancyGuard() external returns (bool) envfree;
+    function UnstoppableVault_Harness.loanReceiver() external returns (address) envfree;
     // function UnstoppableVault_Harness.maxDeposit(address) external returns (uint256) envfree;
     // function UnstoppableVault_Harness.maxFlashLoan(address _token) external returns (uint256) envfree;
     // function UnstoppableVault_Harness.maxMint(address) external returns (uint256) envfree;
@@ -107,7 +107,7 @@ function isValidLoan(env e, address v, address _receiver, address _token, uint25
     return balancedSharesAndAssets;
 }
 
-function balancesInScope(uint256 amount) returns (bool) {
+function balancesInScope(uint256 amount, address loanReceiver) returns (bool) {
     // checking for maxint overflow is out-of-scope, so just make
     // sure nothing comes very close
     mathint m = MAX_UINT256() / 16;    
@@ -127,7 +127,9 @@ rule isValidLoan() {
     address asset;
     bytes data;
     
-    require(balancesInScope(amount));
+    address loanReceiver = currentContract.loanReceiver();
+
+    require(balancesInScope(amount, loanReceiver));
 
     bool validLoan = isValidLoan(e, currentContract, loanReceiver, asset, amount);
     currentContract.flashLoan@withrevert(e, loanReceiver, asset, amount, data);
@@ -141,13 +143,15 @@ rule validate_flashFeeAdjustedForBug() {
     address asset;
     bytes data;
 
-    require(balancesInScope(amount));
+    address loanReceiver = currentContract.loanReceiver();
+
+    require(balancesInScope(amount, loanReceiver));
 
     uint256 fee = vaultWithHarness.flashFeeAdjustedForBug@withrevert(e, asset, amount);
     bool flashFeeAdjustedForBugReverted = lastReverted;
     currentContract.flashLoan(e, loanReceiver, asset, amount, data);
     assert(!flashFeeAdjustedForBugReverted, "if the loan worked flashFeeAdjustedForBug must also work");
-    assert(fee == loanReceiver.receivedFee(), "fees must match");
+    assert(fee == loanReceiver.receivedFee(e), "fees must match");
 }
 
 rule isValidLoanNeverReverts() {
@@ -155,6 +159,8 @@ rule isValidLoanNeverReverts() {
     uint256 amount;
     address asset;
     bytes data;
+
+    address loanReceiver = currentContract.loanReceiver();
 
     bool validLoan = isValidLoan@withrevert(e, currentContract, loanReceiver, asset, amount);
     assert(!lastReverted, "isValidLoan never reverts");

@@ -14,6 +14,7 @@ files = \
 common_options = \
         --link UnstoppableVault:asset=SimpleToken \
         --link UnstoppableVault_Harness:asset=SimpleToken \
+        --link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
         --build_cache \
         --solc solc8.25 \
         --solc_allow_path src \

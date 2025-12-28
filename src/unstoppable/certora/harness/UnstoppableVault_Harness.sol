@@ -24,8 +24,11 @@ contract UnstoppableVault_Harness is
     constructor(
         ERC20 _token,
         address _owner,
-        address _feeRecipient
+        address _feeRecipient,
+        address _loanReceiver
     ) UnstoppableVault(_token, _owner, _feeRecipient) {}
+
+    IERC3156FlashBorrower public loanReceiver;
 
     function flashFeeAdjustedForBug(
         address _token,
