@@ -1,4 +1,4 @@
-import "storageGhost.spec";
+// import "storageGhost.spec";
 
 // methods {
 //     // pure

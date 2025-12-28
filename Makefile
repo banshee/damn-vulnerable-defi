@@ -1,3 +1,4 @@
+certoradir = src/unstoppable/certora
 certoraRun = . ~/.secrets/1passwordtoken.env && time op run --env-file=$(HOME)/homedir/.env.1password -- mamba run -n certoraweb certoraRun
 compile_only = $(certoraRun) --compilation_steps_only
 runner_with_options = ${certoraRun} $(common_options) $(if $(COMPILE_ONLY),--compilation_steps_only,)
@@ -7,6 +8,7 @@ files = \
         "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" \
         "src/unstoppable/certora/harness/ReentrancyGuardDemo.sol" \
         "src/unstoppable/certora/harness/CallbackNoop.sol" \
+        "src/unstoppable/certora/harness/CallbackShim.sol" \
         "src/unstoppable/SimpleToken.sol" \
 
 common_options = \
@@ -19,6 +21,10 @@ common_options = \
         --optimistic_loop \
         --prover_args '-enableStorageSplitting false' \
         --wait_for_results all
+
+isValidLoan:
+	${runner_with_options} $(files) \
+        --verify UnstoppableVault_Harness:$(certoradir)/spec/isValidLoan.spec \
 
 # x:
 # 	${runner_with_options} $(files) \
@@ -34,11 +40,6 @@ s:
         --verify UnstoppableVault_Harness:src/unstoppable/certora/SoladyReentrantGuard.spec \
         --parametric_contracts UnstoppableVault_Harness
         
-isValidLoan:
-	${runner_with_options} $(files) \
-        --rule isValidLoan \
-        --verify UnstoppableVault:src/unstoppable/certora/isValidLoan.spec \
-
 safeTransferFrom:
 	${runner_with_options} $(files) \
         --verify SimpleTokenWithCallToSafeTransferFrom:src/unstoppable/certora/safeTransferFrom.spec \

@@ -2,7 +2,7 @@
 
 pragma solidity =0.8.25;
 
-import {UnstoppableVault} from "./UnstoppableVault.sol";
+import {UnstoppableVault} from "src/unstoppable/UnstoppableVault.sol";
 import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156.sol";
 
 contract Callback_UnstoppableVault {

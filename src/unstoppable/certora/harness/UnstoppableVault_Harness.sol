@@ -19,9 +19,32 @@ contract UnstoppableVault_Harness is
     UnstoppableVault,
     SoladyReentrancyGuardHelper
 {
+    using FixedPointMathLib for uint256;
+
     constructor(
         ERC20 _token,
         address _owner,
         address _feeRecipient
-    ) nonReentrant UnstoppableVault(_token, _owner, _feeRecipient) {}
+    ) UnstoppableVault(_token, _owner, _feeRecipient) {}
+
+    function flashFeeAdjustedForBug(
+        address _token,
+        uint256 _amount
+    ) public view returns (uint256 fee) {
+        if (address(asset) != _token) {
+            revert UnsupportedCurrency();
+        }
+
+        // The bug in flashFee() is that calcules the fee AFTER loaning the
+        // money to receipient, so the receipient might have their fee subsidy eligibility
+        // stolen.  The calculation should be before doing the actual loan.
+        uint256 adjustedMaxFlashloan = ERC20(_token).balanceOf(address(this)) -
+            _amount;
+
+        if (block.timestamp < end && _amount < adjustedMaxFlashloan) {
+            return 0;
+        } else {
+            return _amount.mulWadUp(FEE_FACTOR);
+        }
+    }
 }

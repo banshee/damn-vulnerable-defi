@@ -56,14 +56,3 @@ function isValidLoan(UnstoppableVault v, uint256 amount, address receiver, addre
     uint256 receiverBalance = token.balanceOf(receiver);
     return amount <= maxLoan && receiverBalance >= fee;
 }
-
-
-// A valid loan must be less than or equal to the maxFlashLoan amount
-// The receiver must have enough balance to pay the fee
-// Note that an amount of 0 is considered a valid loan, but likely not useful
-function isValidLoan(UnstoppableVault v, uint256 amount, address receiver, address token) {
-    uint256 maxLoan = v.maxFlashLoan(token);
-    uint256 fee = v.flashFee(token, amount);
-    uint256 receiverBalance = token.balanceOf(receiver);
-    return amount <= maxLoan && receiverBalance >= fee;
-}

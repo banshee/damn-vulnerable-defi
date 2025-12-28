@@ -14,6 +14,11 @@ contract CallbackNoop is IERC3156FlashBorrower {
     bytes32 public constant RETURN_VALUE =
         keccak256("IERC3156FlashBorrower.onFlashLoan");
 
+    uint256 public expectedFee;
+
+    error UnexpectedFee();
+    error NotEnoughBalance();
+
     function onFlashLoan(
         address initiator,
         address token,
@@ -21,7 +26,14 @@ contract CallbackNoop is IERC3156FlashBorrower {
         uint256 fee,
         bytes calldata data
     ) external returns (bytes32) {
-        ERC20(token).approve(initiator, amount + fee);
+        // this is just to display information about balance in the Certora UI
+        if (expectedFee != fee) {
+            revert UnexpectedFee();
+        }
+        if (ERC20(token).balanceOf(address(this)) < amount + fee) {
+            revert NotEnoughBalance();
+        }
+        ERC20(token).approve(msg.sender, amount + fee);
         return RETURN_VALUE;
     }
 }

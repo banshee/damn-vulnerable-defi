@@ -2,12 +2,11 @@ import "SimpleTokenDispatch.spec";
 import "SoladyReentrancyGuardHelper.spec";
 using CallbackNoop as loanReceiver;
 using UnstoppableVault_Harness as vaultWithHarness;
-using SimpleToken as st;
 
 methods {
     // // view
     // function UnstoppableVault_Harness.DOMAIN_SEPARATOR() external returns (bytes32) envfree;
-    function UnstoppableVault_Harness.FEE_FACTOR() external returns (uint256) envfree;
+    // function UnstoppableVault_Harness.FEE_FACTOR() external returns (uint256) envfree;
     // function UnstoppableVault_Harness.GRACE_PERIOD() external returns (uint64) envfree;
     // function UnstoppableVault_Harness.allowance(address, address) external returns (uint256) envfree;
     function UnstoppableVault_Harness.asset() external returns (address) envfree;
@@ -16,7 +15,7 @@ methods {
     // function UnstoppableVault_Harness.convertToShares(uint256 assets) external returns (uint256) envfree;
     // function UnstoppableVault_Harness.decimals() external returns (uint8) envfree;
     // function UnstoppableVault_Harness.end() external returns (uint64) envfree;
-    function UnstoppableVault_Harness.feeRecipient() external returns (address) envfree;
+    // function UnstoppableVault_Harness.feeRecipient() external returns (address) envfree;
     // function UnstoppableVault_Harness.flashFee(address _token, uint256 _amount) external returns (uint256) envfree;
     function UnstoppableVault_Harness.getSoladyReentrancyGuardValue() external returns (uint256) envfree;
     function UnstoppableVault_Harness.isLockedBySoladyReentrancyGuard() external returns (bool) envfree;
@@ -56,23 +55,14 @@ methods {
     function UnstoppableVault_Harness.getSoladyCodesize() external returns (uint256) envfree;
 
     function _.onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes data) external => DISPATCH(optimistic=true)[CallbackNoop.onFlashLoan(address, address, uint256, uint256, bytes)];
-
-    function CallbackNoop.expectedFee() external returns (uint256) envfree;
 }
 
 use invariant reentracyLockIsUnlocked;
 definition MAX_UINT256() returns uint256 = 0xffffffffffffffffffffffffffffffff;
 
-function simpleVault() returns (bool) {
-    address feeRecipient = currentContract.feeRecipient();
-    require (st == currentContract.asset());
-    require (feeRecipient != 0);
-    require (st.balanceOf(feeRecipient) == 0);
-    return true;
-}
-
-// flashFee: _amount.mulWadUp(FEE_FACTOR)
-// convertToShares assets.mulDivDown(totalSupply(), totalAssets())
+function mulOverflows(uint256 a, uint256 b) returns bool {
+    
+};
 
 // A valid loan must be less than or equal to the maxFlashLoan amount
 // The receiver must have enough balance to pay the fee
@@ -80,7 +70,12 @@ function simpleVault() returns (bool) {
 function isValidLoan(env e, address v, address _receiver, address _token, uint256 amount) returns bool {
     requireInvariant(reentracyLockIsUnlocked);
     require (vaultWithHarness == v);
-    // To simplify, prevent the balance of the fee recipient overflowing.
+    mathint ta = vaultWithHarness.totalAssets();
+    mathint ts = vaultWithHarness.totalSupply();
+    mathint productOfSupplyAndAssets = ta * ts;
+    if (productOfSupplyAndAssets > MAX_UINT256()) {
+        return false;
+    }
     if (amount == 0 || e.msg.sender == 0 || e.msg.value  != 0 || vaultWithHarness.asset() != _token) {
         return false;
     }
@@ -91,7 +86,7 @@ function isValidLoan(env e, address v, address _receiver, address _token, uint25
     if (amount > maxLoan) {
         return false;
     } 
-    uint256 fee = vaultWithHarness.flashFeeAdjustedForBug@withrevert(e, _token, amount);
+    uint256 fee = vaultWithHarness.flashFee@withrevert(e, _token, amount);
     if (lastReverted) {
         return false;
     }
@@ -99,18 +94,11 @@ function isValidLoan(env e, address v, address _receiver, address _token, uint25
     if (receiverBalance < fee) {
         return false;
     }
-    if (receiverBalance + amount > MAX_UINT256()) {
-        return false;
-    }
-    if (receiverBalance + amount + fee > MAX_UINT256()) {
-        return false;
-    }
-    uint256 totalSupply = vaultWithHarness.totalSupply(e);
-    uint256 nShares = vaultWithHarness.convertToShares@withrevert(e, totalSupply);
+    // This will revert if the numbers are too large; 2^256 - 18 for supply, for example
+    bool balancedSharesAndAssets = vaultWithHarness.convertToShares@withrevert(e, vaultWithHarness.totalSupply(e)) == vaultWithHarness.totalAssets(e);
     if (lastReverted) {
         return false;
     }
-    bool balancedSharesAndAssets = nShares == vaultWithHarness.totalAssets(e);
     return balancedSharesAndAssets;
 }
 
@@ -120,21 +108,11 @@ function safeIsValidLoan(env e, address v, address _receiver, address _token, ui
 }
 
 rule isValidLoan() {
-    require (simpleVault());
-
     env e;
     uint256 amount;
     address asset = currentContract.asset();
     bytes data;
     
-    mathint m = MAX_UINT256() / 16;    
-    require (st.balanceOf(loanReceiver) < m);
-    require (st.balanceOf(currentContract) < m);
-    require (st.balanceOf(currentContract.feeRecipient()) < m);
-    require (amount < m);
-
-    uint256 fee = vaultWithHarness.flashFeeAdjustedForBug@withrevert(e, asset, amount);
-    require (loanReceiver.expectedFee() == fee);
     require(amount > 0 && e.msg.sender != 0 && e.msg.value  == 0);
     bool validLoan = safeIsValidLoan(e, currentContract, loanReceiver, asset, amount);
     currentContract.flashLoan@withrevert(e, loanReceiver, asset, amount, data);
