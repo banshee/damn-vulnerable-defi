@@ -14,6 +14,8 @@ contract CallbackShim is IERC3156FlashBorrower, Callback_UnstoppableVault {
 
     UnstoppableVault public immutable targetVault;
 
+    uint256 public loanFee;
+
     function onFlashLoan(
         address initiator,
         address token,
@@ -21,7 +23,8 @@ contract CallbackShim is IERC3156FlashBorrower, Callback_UnstoppableVault {
         uint256 fee,
         bytes calldata data
     ) external override returns (bytes32) {
-        doCallback(targetVault, this);
+        loanFee = fee;
+        // doCallback(targetVault, this);
         ERC20(token).approve(msg.sender, amount + fee);
         return RETURN_VALUE;
     }

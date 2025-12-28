@@ -14,7 +14,7 @@ contract CallbackNoop is IERC3156FlashBorrower {
     bytes32 public constant RETURN_VALUE =
         keccak256("IERC3156FlashBorrower.onFlashLoan");
 
-    uint256 public receivedFee;
+    uint256 public loanFee;
 
     error NotEnoughBalance();
 
@@ -25,7 +25,7 @@ contract CallbackNoop is IERC3156FlashBorrower {
         uint256 fee,
         bytes calldata data
     ) external returns (bytes32) {
-        receivedFee = fee;
+        loanFee = fee;
         if (ERC20(token).balanceOf(address(this)) < amount + fee) {
             revert NotEnoughBalance();
         }

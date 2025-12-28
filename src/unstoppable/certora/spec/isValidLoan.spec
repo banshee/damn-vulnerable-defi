@@ -1,5 +1,6 @@
 import "SimpleTokenDispatch.spec";
 import "SoladyReentrancyGuardHelper.spec";
+import "env.spec";
 using UnstoppableVault_Harness as vaultWithHarness;
 using SimpleToken as st;
 
@@ -57,7 +58,7 @@ methods {
 
     function _.onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes data) external => DISPATCH(optimistic=true)[CallbackNoop.onFlashLoan(address, address, uint256, uint256, bytes)];
 
-    function CallbackNoop.receivedFee() external returns (uint256) envfree;
+    function CallbackNoop.loanFee() external returns (uint256) envfree;
 }
 
 definition MAX_UINT256() returns uint256 = 0xffffffffffffffffffffffffffffffff;
@@ -109,7 +110,8 @@ function isValidLoan(env e, address v, address _receiver, address _token, uint25
 
 function balancesInScope(uint256 amount, address loanReceiver) returns (bool) {
     // checking for maxint overflow is out-of-scope, so just make
-    // sure nothing comes very close
+    // sure nothing comes very close.
+    // also the loanReceiver has at least enough to pay two fees
     mathint m = MAX_UINT256() / 16;    
     require (st.balanceOf(loanReceiver) < m);
     require (st.balanceOf(currentContract) < m);
@@ -133,8 +135,35 @@ rule isValidLoan() {
 
     bool validLoan = isValidLoan(e, currentContract, loanReceiver, asset, amount);
     currentContract.flashLoan@withrevert(e, loanReceiver, asset, amount, data);
-    assert(validLoan <=> !lastReverted, "a valid loan never reverts and an invalid loan always reverts");
-    // assert(!validLoan => lastReverted, "an invalid loan always reverts");
+    bool flashLoanReverted = lastReverted;
+    assert(validLoan <=> !flashLoanReverted, "a valid loan never reverts and an invalid loan always reverts");
+}
+
+function doTransferFrom(address a, address b, uint256 amount) {
+
+}
+
+rule isValidSubsequentLoan() {
+    simpleVault();
+
+    env e;
+    env e1;
+    uint256 amount;
+    address asset;
+    bytes data;
+    
+
+    address loanReceiver = currentContract.loanReceiver();
+
+    currentContract.flashLoan(e, loanReceiver, asset, amount, data);
+
+    // return the fee
+    asset.transferFrom(e1, currentContract.feeRecipient(e), loanReceiver, loanReceiver.loanFee(e));
+
+    currentContract.flashLoan@withrevert(e, loanReceiver, asset, amount, data);
+    bool secondLoanReverted = lastReverted;
+
+    assert(!secondLoanReverted, "second loan must also work");
 }
 
 rule validate_flashFeeAdjustedForBug() {
@@ -151,7 +180,7 @@ rule validate_flashFeeAdjustedForBug() {
     bool flashFeeAdjustedForBugReverted = lastReverted;
     currentContract.flashLoan(e, loanReceiver, asset, amount, data);
     assert(!flashFeeAdjustedForBugReverted, "if the loan worked flashFeeAdjustedForBug must also work");
-    assert(fee == loanReceiver.receivedFee(e), "fees must match");
+    assert(fee == loanReceiver.loanFee(e), "fees must match");
 }
 
 rule isValidLoanNeverReverts() {

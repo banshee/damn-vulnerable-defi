@@ -14,7 +14,7 @@ files = \
 common_options = \
         --link UnstoppableVault:asset=SimpleToken \
         --link UnstoppableVault_Harness:asset=SimpleToken \
-        --link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
+        --link CallbackShim:targetVault=UnstoppableVault_Harness \
         --build_cache \
         --solc solc8.25 \
         --solc_allow_path src \
@@ -23,8 +23,14 @@ common_options = \
         --prover_args '-enableStorageSplitting false' \
         --wait_for_results all
 
+isValidLoanCB:
+	${runner_with_options} $(files) \
+        --link UnstoppableVault_Harness:loanReceiver=CallbackShim \
+        --verify UnstoppableVault_Harness:$(certoradir)/spec/isValidLoan.spec \
+
 isValidLoan:
 	${runner_with_options} $(files) \
+        --link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
         --verify UnstoppableVault_Harness:$(certoradir)/spec/isValidLoan.spec \
 
 # x:
