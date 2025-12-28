@@ -3,18 +3,24 @@
 pragma solidity =0.8.25;
 
 import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156.sol";
-import {Callback_UnstoppableVault} from "./Callback_UnstoppableVault.sol";
-import {CallbackNoop} from "./CallbackNoop.sol";
-import {UnstoppableVault} from "src/unstoppable/UnstoppableVault.sol";
+import {UnstoppableVault} from "../../UnstoppableVault.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {Callback_UnstoppableVault} from "./Callback_UnstoppableVault.sol";
 
+
+/**
+ * An ERC4626-compliant tokenized vault offering flashloans for a fee.
+ * An owner can pause the contract and execute arbitrary changes.
+ */
 contract CallbackShim is IERC3156FlashBorrower, Callback_UnstoppableVault {
     bytes32 public constant RETURN_VALUE =
         keccak256("IERC3156FlashBorrower.onFlashLoan");
 
-    UnstoppableVault public immutable targetVault;
-
     uint256 public loanFee;
+
+    error NotEnoughBalance();
+
+    address public targetVault;
 
     function onFlashLoan(
         address initiator,
@@ -22,9 +28,11 @@ contract CallbackShim is IERC3156FlashBorrower, Callback_UnstoppableVault {
         uint256 amount,
         uint256 fee,
         bytes calldata data
-    ) external override returns (bytes32) {
+    ) external returns (bytes32) {
         loanFee = fee;
-        // doCallback(targetVault, this);
+        if (ERC20(token).balanceOf(address(this)) < amount + fee) {
+            revert NotEnoughBalance();
+        }
         ERC20(token).approve(msg.sender, amount + fee);
         return RETURN_VALUE;
     }

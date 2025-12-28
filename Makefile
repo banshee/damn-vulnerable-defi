@@ -23,31 +23,22 @@ common_options = \
         --prover_args '-enableStorageSplitting false' \
         --wait_for_results all
 
-isValidLoanCB:
+baseIsValidLoanOptions = \
 	${runner_with_options} $(files) \
-        --link UnstoppableVault_Harness:loanReceiver=CallbackShim \
         --verify UnstoppableVault_Harness:$(certoradir)/spec/isValidLoan.spec \
+        --parametric_contracts UnstoppableVault_Harness \
+
+.PHONY: isValidLoan isValidLoanCB
+
+isValidLoanCB:
+	${baseIsValidLoanOptions} \
+	--link UnstoppableVault_Harness:loanReceiver=CallbackShim \
 
 isValidLoan:
-	${runner_with_options} $(files) \
-        --link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
-        --verify UnstoppableVault_Harness:$(certoradir)/spec/isValidLoan.spec \
+	${baseIsValidLoanOptions} \
+	--link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
 
-# x:
-# 	${runner_with_options} $(files) \
-#         --verify SimpleRe:src/unstoppable/certora/x.spec \
-
-rdemo:
-	${runner_with_options} $(files) \
-        --verify ReentrancyGuardDemo:src/unstoppable/certora/rdemo.spec \
-        --parametric_contracts ReentrancyGuardDemo
-
-s:
+s SoladyReentrantGuard:
 	${runner_with_options} $(files) \
         --verify UnstoppableVault_Harness:src/unstoppable/certora/SoladyReentrantGuard.spec \
         --parametric_contracts UnstoppableVault_Harness
-        
-safeTransferFrom:
-	${runner_with_options} $(files) \
-        --verify SimpleTokenWithCallToSafeTransferFrom:src/unstoppable/certora/safeTransferFrom.spec \
-

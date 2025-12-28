@@ -56,9 +56,9 @@ methods {
     // // pure
     function UnstoppableVault_Harness.getSoladyCodesize() external returns (uint256) envfree;
 
-    function _.onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes data) external => DISPATCH(optimistic=true)[CallbackNoop.onFlashLoan(address, address, uint256, uint256, bytes)];
+    function _.onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes data) external => DISPATCH(optimistic=true)[_.onFlashLoan(address, address, uint256, uint256, bytes)];
 
-    function CallbackNoop.loanFee() external returns (uint256) envfree;
+    function _.loanFee() external envfree;
 }
 
 definition MAX_UINT256() returns uint256 = 0xffffffffffffffffffffffffffffffff;
