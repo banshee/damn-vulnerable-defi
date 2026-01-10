@@ -10,6 +10,7 @@ methods {
     // function SimpleToken.approve(address spender, uint256 value) external returns (bool) envfree;
     // function SimpleToken.transfer(address to, uint256 value) external returns (bool) envfree;
     // function SimpleToken.transferFrom(address from, address to, uint256 value) external returns (bool) envfree;
+    
     // view
     function _.allowance(address owner, address spender) external => DISPATCH(optimistic=true)[SimpleToken.allowance(address, address)];
     function _.balanceOf(address account) external => DISPATCH(optimistic=true)[SimpleToken.balanceOf(address)];

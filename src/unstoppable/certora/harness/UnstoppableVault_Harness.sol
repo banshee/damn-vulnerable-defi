@@ -21,6 +21,10 @@ contract UnstoppableVault_Harness is
 {
     using FixedPointMathLib for uint256;
 
+    // From the test
+    uint256 public constant TOKENS_IN_VAULT = 1_000_000e18;
+    uint256 public constant INITIAL_PLAYER_TOKEN_BALANCE = 10e18;
+
     constructor(
         ERC20 _token,
         address _owner,
@@ -38,7 +42,7 @@ contract UnstoppableVault_Harness is
             revert UnsupportedCurrency();
         }
 
-        // The bug in flashFee() is that calcules the fee AFTER loaning the
+        // The bug in flashFee() is that calculates the fee AFTER loaning the
         // money to receipient, so the receipient might have their fee subsidy eligibility
         // stolen.  The calculation should be before doing the actual loan.
         uint256 adjustedMaxFlashloan = ERC20(_token).balanceOf(address(this)) -

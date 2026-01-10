@@ -24,10 +24,13 @@ contract Callback_UnstoppableVault {
     function doCallback(
         UnstoppableVault callingContract,
         IERC3156FlashBorrower flashBorrower
-    ) public {
+    ) public returns (uint8 functionId) {
+        if (iteration > type(uint256).max / 2) {
+            iteration = 0;
+        }
         // Note that function count is one greater than the number of functions
         // so this function can be a noop
-        uint8 functionId = functionIds[iteration++] % 14;
+        functionId = functionIds[iteration++] % 14;
 
         if (functionId == 0) {
             callingContract.approve(
@@ -40,10 +43,10 @@ contract Callback_UnstoppableVault {
                 parameters_address[iteration++]
             );
         } else if (functionId == 2) {
-            callingContract.execute(
-                parameters_address[iteration++],
-                parameters_bytes[iteration++]
-            );
+            // callingContract.execute(
+            //     parameters_address[iteration++],
+            //     parameters_bytes[iteration++]
+            // );
         } else if (functionId == 3) {
             callingContract.flashLoan(
                 flashBorrower,

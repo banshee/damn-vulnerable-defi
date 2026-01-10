@@ -4,7 +4,7 @@ pragma solidity =0.8.25;
 
 import {Test, console} from "forge-std/Test.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
-import {UnstoppableVault, Owned} from "../../src/unstoppable/UnstoppableVault.sol";
+import {UnstoppableVault} from "src/unstoppable/UnstoppableVault.sol";
 import {UnstoppableMonitor} from "../../src/unstoppable/UnstoppableMonitor.sol";
 
 contract UnstoppableChallenge is Test {
