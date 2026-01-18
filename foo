@@ -1,0 +1,733 @@
+Script started on Mon Jan 12 13:51:34 2026
+Command: /Users/james/bin/cvl.sh st
+. ~/.secrets/1passwordtoken.env && time op run --env-file=/Users/james/homedir/.env.1password -- mamba run -n certora certoraRun --link UnstoppableVault_Harness:asset=SimpleToken --link CallbackShim:targetVault=UnstoppableVault_Harness --solc solc8.25 --solc_allow_path src --rule_sanity basic --optimistic_loop --contract_recursion_limit 2  --compilation_steps_only "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" "src/unstoppable/certora/harness/ReentrancyGuardDemo.sol" "src/unstoppable/certora/harness/CallbackNoop.sol" "src/unstoppable/certora/harness/CallbackShim.sol" "src/unstoppable/certora/harness/CallbackBase.sol" "src/unstoppable/SimpleToken.sol"  \
+	--link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
+        --parametric_contracts SimpleToken \
+        --verify SimpleToken:src/unstoppable/certora/spec/SimpleToken.spec \
+
+Compiling src/unstoppable/SimpleToken.sol...
+Compiling src/unstoppable/SimpleToken.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/CallbackBase.sol...
+Compiling src/unstoppable/certora/harness/CallbackBase.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/CallbackNoop.sol...
+Compiling src/unstoppable/certora/harness/CallbackNoop.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/CallbackShim.sol...
+Compiling src/unstoppable/certora/harness/CallbackShim.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/ReentrancyGuardDemo.sol...
+Compiling src/unstoppable/certora/harness/ReentrancyGuardDemo.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/UnstoppableVault_Harness.sol...
+Compiling src/unstoppable/certora/harness/UnstoppableVault_Harness.sol to expose internal function information and local variables...
+
+real	0m9.127s
+user	0m4.513s
+sys	0m1.251s
+starting rsync
+
+real	0m2.109s
+user	0m0.860s
+sys	0m0.588s
+Script started, output log file is '/home/james/cvlruns/output/damn-vulnerable-defi.1768254694/results.txt'.
+. ~/.secrets/1passwordtoken.env && time op run --env-file=/home/james/homedir/.env.1password -- mamba run -n certora certoraRun --link UnstoppableVault_Harness:asset=SimpleToken --link CallbackShim:targetVault=UnstoppableVault_Harness --solc solc8.25 --solc_allow_path src --rule_sanity basic --optimistic_loop --contract_recursion_limit 2   "src/unstoppable/certora/harness/UnstoppableVault_Harness.sol" "src/unstoppable/certora/harness/ReentrancyGuardDemo.sol" "src/unstoppable/certora/harness/CallbackNoop.sol" "src/unstoppable/certora/harness/CallbackShim.sol" "src/unstoppable/certora/harness/CallbackBase.sol" "src/unstoppable/SimpleToken.sol"  \
+--link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
+        --parametric_contracts SimpleToken \
+        --verify SimpleToken:src/unstoppable/certora/spec/SimpleToken.spec \
+
+WARNING: Build cache is used with a local certora-cli script version. Beware of false hits and unexpected behaviors!
+Reports in /home/james/cvlruns/code/damn-vulnerable-defi.1768254694/emv-1-certora-12-Jan--13-51/Reports
+Start Mon Jan 12 13:51:54 PST 2026
+The scene contains 6 contracts:
+CallbackBase : 0xce4604a0000000000000000000000012,
+CallbackNoop : 0xce4604a0000000000000000000000018,
+UnstoppableVault_Harness : 0xce4604a0000000000000000000000047,
+CallbackShim : 0xce4604a0000000000000000000000029,
+ReentrancyGuardDemo : 0xce4604a0000000000000000000000038,
+SimpleToken : 0xce4604a0000000000000000000000008
+Running initial transformations
+Has CVL checks.
+Checking CVL src/unstoppable/certora/spec/SimpleToken.spec for contract SimpleToken
+Unrolling loops 1 time, unwinding condition is assumed
+Checking rule ghostMatchesStorageSimpleTokenToken1 (1 out of 3)...
+Checking rule totalSupplyIsSumOfBalancesSimpleTokenToken1 (2 out of 3)...
+Checking rule envfreeFuncsStaticCheck (3 out of 3)...
+Result for envfreeFuncsStaticCheck: envfreeFuncsStaticCheck: balanceOf(address): SUCCESS
+totalSupply(): SUCCESS
+Starting to run on rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor
+Starting to run on rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256)
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)
+Starting to run on rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transfer(address,uint256)
+Starting to run on rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)
+Verified: totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor
+totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor: Properties successfully verified on all inputs
+Starting to run on rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition
+Starting to run on rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256): 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256): 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Total time for totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256): 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Total time for ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Verified: totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256)
+totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256): Properties successfully verified on all inputs
+Verified: ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256): Properties successfully verified on all inputs
+Verified: ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256): Properties successfully verified on all inputs
+Verified: ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor
+ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor: Properties successfully verified on all inputs
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition
+Total time for totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition
+totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition: A property is violated
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256): 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Verified: ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256): Properties successfully verified on all inputs
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous
+Starting to run on rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-invariant_not_trivial_postcondition
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-invariant_not_trivial_postcondition
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-rule_not_vacuous
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-rule_not_vacuous
+Total time for totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256): 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)
+totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256): A property is violated
+Total time for totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transfer(address,uint256): 1 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transfer(address,uint256)
+totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transfer(address,uint256): A property is violated
+Total time for totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous
+totalSupplyIsSumOfBalancesSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous: A property is violated
+Starting to run on rule ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-invariant_not_trivial_postcondition
+Total time for ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition
+ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-invariant_not_trivial_postcondition: A property is violated
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-invariant_not_trivial_postcondition: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-invariant_not_trivial_postcondition
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-invariant_not_trivial_postcondition: A property is violated
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-invariant_not_trivial_postcondition: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-invariant_not_trivial_postcondition
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-invariant_not_trivial_postcondition: A property is violated
+Total time for ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous
+ghostMatchesStorageSimpleTokenToken1-Induction base: After the constructor-rule_not_vacuous: A property is violated
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-invariant_not_trivial_postcondition: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-invariant_not_trivial_postcondition
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-invariant_not_trivial_postcondition: A property is violated
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous: A property is violated
+Total time for totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous
+totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256)-rule_not_vacuous: A property is violated
+received `signalSkip` for rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-approve(address,uint256)-invariant_not_trivial_postcondition
+received `signalSkip` for rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transfer(address,uint256)-rule_not_vacuous
+received `signalSkip` for rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-invariant_not_trivial_postcondition
+received `signalSkip` for rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-rule_not_vacuous
+received `signalSkip` for rule totalSupplyIsSumOfBalancesSimpleTokenToken1-Using general requirements-transfer(address,uint256)-invariant_not_trivial_postcondition
+Result for totalSupplyIsSumOfBalancesSimpleTokenToken1: totalSupplyIsSumOfBalancesSimpleTokenToken1: Induction base: After the constructor: SUCCESS
+Induction step: after external (non-view) methods: Using general requirements: transfer(address,uint256): FAIL: assert weak invariant in post-state
+transferFrom(address,address,uint256): FAIL: assert weak invariant in post-state
+approve(address,uint256): SUCCESS
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-rule_not_vacuous: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-rule_not_vacuous
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-transfer(address,uint256)-rule_not_vacuous: A property is violated
+Total time for ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-rule_not_vacuous: 0 seconds ; Split time: 0 seconds ; Number of problems: 1 ; Solver time : 0 seconds
+Violated: ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-rule_not_vacuous
+ghostMatchesStorageSimpleTokenToken1-Using general requirements-transferFrom(address,address,uint256)-rule_not_vacuous: A property is violated
+Result for ghostMatchesStorageSimpleTokenToken1: ghostMatchesStorageSimpleTokenToken1: Induction base: After the constructor: SUCCESS
+Induction step: after external (non-view) methods: Using general requirements: transferFrom(address,address,uint256): SUCCESS
+transfer(address,uint256): SUCCESS
+approve(address,uint256): SUCCESS
+Results for envfreeFuncsStaticCheck:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|balanceOf(address)                      |Not violated |0         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|totalSupply()                           |Not violated |0         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Results for Using general requirements:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|transfer(address,uint256)               |Violated     |2         |Assert message: assert weak invariant in post-state         |CallbackBase=6680                                 |
+|                                        |(sat)        |          |                                                            |CallbackNoop=5786                                 |
+|                                        |             |          |                                                            |CallbackShim=6989                                 |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=8516                          |
+|                                        |             |          |                                                            |SimpleToken=10000                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=7968                     |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=2                   |
+|                                        |             |          |                                                            |certoraInvF.selector=2835717307                   |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=2^255 - 1                |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=MAX_UINT256            |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=MAX_UINT256        |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0xffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffffffff                              |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=MAX_UINT256         |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=MAX_UINT256           |
+|                                        |             |          |                                                            |invariantEnv.block.number=MAX_UINT256             |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=MAX_UINT256          |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x782                     |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0xfffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|transferFrom(address,address,uint256)   |Violated     |1         |Assert message: assert weak invariant in post-state         |CallbackBase=9330                                 |
+|                                        |(sat)        |          |                                                            |CallbackNoop=7113                                 |
+|                                        |             |          |                                                            |CallbackShim=5394                                 |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=5897                          |
+|                                        |             |          |                                                            |SimpleToken=5192                                  |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=8677                     |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=3                   |
+|                                        |             |          |                                                            |certoraInvF.selector=599290589                    |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=2^255 - 1                |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=MAX_UINT256            |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=MAX_UINT256        |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0xffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffffffff                              |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=MAX_UINT256         |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=MAX_UINT256           |
+|                                        |             |          |                                                            |invariantEnv.block.number=MAX_UINT256             |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=MAX_UINT256          |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x2710                    |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0xfffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|approve(address,uint256)                |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Results for Induction step: after external (non-view) methods:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|Using general requirements              |Violated     |2         |Assert message: assert weak invariant in post-state         |no local variables                                |
+|                                        |(sat)        |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Results for totalSupplyIsSumOfBalancesSimpleTokenToken1:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|Induction base: After the constructor   |Not violated |0         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|Induction step: after external          |Violated     |2         |Assert message: assert weak invariant in post-state         |no local variables                                |
+|(non-view) methods                      |(sat)        |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Results for Using general requirements:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|transferFrom(address,address,uint256)   |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|transfer(address,uint256)               |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|approve(address,uint256)                |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Results for Induction step: after external (non-view) methods:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|Using general requirements              |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Results for ghostMatchesStorageSimpleTokenToken1:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|Induction base: After the constructor   |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|Induction step: after external          |Not violated |1         |                                                            |no local variables                                |
+|(non-view) methods                      |(unsat)      |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Results for all:
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+|Rule name                               |Verified     |Time (sec)|Description                                                 |Local vars                                        |
+|----------------------------------------|-------------|----------|------------------------------------------------------------|--------------------------------------------------|
+|envfreeFuncsStaticCheck                 |Not violated |0         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|Induction base: After the constructor   |Not violated |0         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|transfer(address,uint256)               |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|approve(address,uint256)                |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|approve(address,uint256)                |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|Induction base: After the constructor   |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|transferFrom(address,address,uint256)   |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+|invariant_not_trivial_postcondition     |Violated     |0         |Assert message: assert weak invariant in post-state         |CallbackBase=0xbffffffffffffffffffffffffffffffffff|
+|                                        |(sat)        |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |CallbackNoop=2^158                                |
+|                                        |             |          |                                                            |CallbackShim=0xdffffffffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=2^157                         |
+|                                        |             |          |                                                            |SimpleToken=2^159                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=0x60000000000000000000000|
+|                                        |             |          |                                                            |00000000000000000                                 |
+|                                        |             |          |                                                            |initCalldata=...                                  |
+|                                        |             |          |                                                            |initCalldata.length=...                           |
+|                                        |             |          |                                                            |initEnv.block.basefee=2^255 - 1                   |
+|                                        |             |          |                                                            |initEnv.block.blobbasefee=2^255 - 1               |
+|                                        |             |          |                                                            |initEnv.block.coinbase=0x7ffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|                                        |             |          |                                                            |initEnv.block.difficulty=2^255 - 1                |
+|                                        |             |          |                                                            |initEnv.block.gaslimit=2^255 - 1                  |
+|                                        |             |          |                                                            |initEnv.block.number=2^255 - 1                    |
+|                                        |             |          |                                                            |initEnv.block.timestamp=2^255 - 1                 |
+|                                        |             |          |                                                            |initEnv.msg.sender=0x7ffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffff                                       |
+|                                        |             |          |                                                            |initEnv.msg.value=2^255 - 1                       |
+|                                        |             |          |                                                            |initEnv.tx.origin=0x7fffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffff                                        |
+|transfer(address,uint256)               |Violated     |2         |Assert message: assert weak invariant in post-state         |CallbackBase=6680                                 |
+|                                        |(sat)        |          |                                                            |CallbackNoop=5786                                 |
+|                                        |             |          |                                                            |CallbackShim=6989                                 |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=8516                          |
+|                                        |             |          |                                                            |SimpleToken=10000                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=7968                     |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=2                   |
+|                                        |             |          |                                                            |certoraInvF.selector=2835717307                   |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=2^255 - 1                |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=MAX_UINT256            |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=MAX_UINT256        |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0xffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffffffff                              |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=MAX_UINT256         |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=MAX_UINT256           |
+|                                        |             |          |                                                            |invariantEnv.block.number=MAX_UINT256             |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=MAX_UINT256          |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x782                     |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0xfffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|transferFrom(address,address,uint256)   |Violated     |1         |Assert message: assert weak invariant in post-state         |CallbackBase=9330                                 |
+|                                        |(sat)        |          |                                                            |CallbackNoop=7113                                 |
+|                                        |             |          |                                                            |CallbackShim=5394                                 |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=5897                          |
+|                                        |             |          |                                                            |SimpleToken=5192                                  |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=8677                     |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=3                   |
+|                                        |             |          |                                                            |certoraInvF.selector=599290589                    |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=2^255 - 1                |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=MAX_UINT256            |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=MAX_UINT256        |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0xffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffffffff                              |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=MAX_UINT256         |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=MAX_UINT256           |
+|                                        |             |          |                                                            |invariantEnv.block.number=MAX_UINT256             |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=MAX_UINT256          |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x2710                    |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0xfffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|rule_not_vacuous                        |Not violated |1         |Assert message: sanity check for rule Induction base: Af... |CallbackBase=8079                                 |
+|                                        |(sat)        |          |                                                            |CallbackNoop=9508                                 |
+|                                        |             |          |                                                            |CallbackShim=9195                                 |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=9330                          |
+|                                        |             |          |                                                            |SimpleToken=7113                                  |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=9619                     |
+|                                        |             |          |                                                            |initCalldata=...                                  |
+|                                        |             |          |                                                            |initCalldata.length=2^255 - 1                     |
+|                                        |             |          |                                                            |initEnv.block.basefee=MAX_UINT256                 |
+|                                        |             |          |                                                            |initEnv.block.blobbasefee=MAX_UINT256             |
+|                                        |             |          |                                                            |initEnv.block.coinbase=0xfffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|                                        |             |          |                                                            |initEnv.block.difficulty=MAX_UINT256              |
+|                                        |             |          |                                                            |initEnv.block.gaslimit=MAX_UINT256                |
+|                                        |             |          |                                                            |initEnv.block.number=MAX_UINT256                  |
+|                                        |             |          |                                                            |initEnv.block.timestamp=MAX_UINT256               |
+|                                        |             |          |                                                            |initEnv.msg.sender=0x2710                         |
+|                                        |             |          |                                                            |initEnv.msg.value=0                               |
+|                                        |             |          |                                                            |initEnv.tx.origin=0xffffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffff                                        |
+|invariant_not_trivial_postcondition     |Violated     |0         |Assert message: assert weak invariant in post-state         |CallbackBase=0xdffffffffffffffffffffffffffffffffff|
+|                                        |(sat)        |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |CallbackNoop=2^158                                |
+|                                        |             |          |                                                            |CallbackShim=2^157                                |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=0xbfffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffff                                      |
+|                                        |             |          |                                                            |SimpleToken=2^159                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=0x60000000000000000000000|
+|                                        |             |          |                                                            |00000000000000000                                 |
+|                                        |             |          |                                                            |initCalldata=...                                  |
+|                                        |             |          |                                                            |initCalldata.length=...                           |
+|                                        |             |          |                                                            |initEnv.block.basefee=2^255 - 1                   |
+|                                        |             |          |                                                            |initEnv.block.blobbasefee=2^255 - 1               |
+|                                        |             |          |                                                            |initEnv.block.coinbase=0x7ffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|                                        |             |          |                                                            |initEnv.block.difficulty=2^255 - 1                |
+|                                        |             |          |                                                            |initEnv.block.gaslimit=2^255 - 1                  |
+|                                        |             |          |                                                            |initEnv.block.number=2^255 - 1                    |
+|                                        |             |          |                                                            |initEnv.block.timestamp=2^255 - 1                 |
+|                                        |             |          |                                                            |initEnv.msg.sender=0x7ffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffff                                       |
+|                                        |             |          |                                                            |initEnv.msg.value=2^255 - 1                       |
+|                                        |             |          |                                                            |initEnv.tx.origin=0x7fffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffff                                        |
+|                                        |             |          |                                                            |user=0x7fffffffffffffffffffffffffffffffffffffff   |
+|invariant_not_trivial_postcondition     |Violated     |0         |Assert message: assert weak invariant in post-state         |CallbackBase=0xbffffffffffffffffffffffffffffffffff|
+|                                        |(sat)        |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |CallbackNoop=2^158                                |
+|                                        |             |          |                                                            |CallbackShim=0xdffffffffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=2^157                         |
+|                                        |             |          |                                                            |SimpleToken=2^159                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=0x60000000000000000000000|
+|                                        |             |          |                                                            |00000000000000000                                 |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=2                   |
+|                                        |             |          |                                                            |certoraInvF.selector=2835717307                   |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=...                      |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=2^255 - 1              |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=2^255 - 1          |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0x7fffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffffffff                              |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=2^255 - 1           |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=2^255 - 1             |
+|                                        |             |          |                                                            |invariantEnv.block.number=2^255 - 1               |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=2^255 - 1            |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x7fffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffff                                  |
+|                                        |             |          |                                                            |invariantEnv.msg.value=2^255 - 1                  |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0x7ffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|                                        |             |          |                                                            |user=0x7fffffffffffffffffffffffffffffffffffffff   |
+|invariant_not_trivial_postcondition     |Violated     |0         |Assert message: assert weak invariant in post-state         |CallbackBase=0xbffffffffffffffffffffffffffffffffff|
+|                                        |(sat)        |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |CallbackNoop=2^158                                |
+|                                        |             |          |                                                            |CallbackShim=0xdffffffffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=2^157                         |
+|                                        |             |          |                                                            |SimpleToken=2^159                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=0x60000000000000000000000|
+|                                        |             |          |                                                            |00000000000000000                                 |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=2                   |
+|                                        |             |          |                                                            |certoraInvF.selector=157198259                    |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=...                      |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=2^255 - 1              |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=2^255 - 1          |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0x7fffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffffffff                              |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=2^255 - 1           |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=2^255 - 1             |
+|                                        |             |          |                                                            |invariantEnv.block.number=2^255 - 1               |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=2^255 - 1            |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x7fffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffff                                  |
+|                                        |             |          |                                                            |invariantEnv.msg.value=2^255 - 1                  |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0x7ffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|                                        |             |          |                                                            |user=0x7fffffffffffffffffffffffffffffffffffffff   |
+|rule_not_vacuous                        |Not violated |0         |Assert message: sanity check for rule Induction base: Af... |CallbackBase=0xbffffffffffffffffffffffffffffffffff|
+|                                        |(sat)        |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |CallbackNoop=2^158                                |
+|                                        |             |          |                                                            |CallbackShim=0xdffffffffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=2^157                         |
+|                                        |             |          |                                                            |SimpleToken=2^159                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=0x60000000000000000000000|
+|                                        |             |          |                                                            |00000000000000000                                 |
+|                                        |             |          |                                                            |initCalldata=...                                  |
+|                                        |             |          |                                                            |initCalldata.length=2^254 + 1                     |
+|                                        |             |          |                                                            |initEnv.block.basefee=2^255 - 1                   |
+|                                        |             |          |                                                            |initEnv.block.blobbasefee=2^255 - 1               |
+|                                        |             |          |                                                            |initEnv.block.coinbase=0x7ffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|                                        |             |          |                                                            |initEnv.block.difficulty=2^255 - 1                |
+|                                        |             |          |                                                            |initEnv.block.gaslimit=2^255 - 1                  |
+|                                        |             |          |                                                            |initEnv.block.number=2^255 - 1                    |
+|                                        |             |          |                                                            |initEnv.block.timestamp=2^255 - 1                 |
+|                                        |             |          |                                                            |initEnv.msg.sender=0x7ffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffff                                       |
+|                                        |             |          |                                                            |initEnv.msg.value=0                               |
+|                                        |             |          |                                                            |initEnv.tx.origin=0x7fffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffff                                        |
+|                                        |             |          |                                                            |user=0x7fffffffffffffffffffffffffffffffffffffff   |
+|invariant_not_trivial_postcondition     |Violated     |0         |Assert message: assert weak invariant in post-state         |CallbackBase=17722                                |
+|                                        |(sat)        |          |                                                            |CallbackNoop=17720                                |
+|                                        |             |          |                                                            |CallbackShim=17723                                |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=17724                         |
+|                                        |             |          |                                                            |SimpleToken=17725                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=17721                    |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=3                   |
+|                                        |             |          |                                                            |certoraInvF.selector=599290589                    |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=...                      |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=0                      |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=0                  |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0x0                   |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=0                   |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=0                     |
+|                                        |             |          |                                                            |invariantEnv.block.number=0                       |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=0                    |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x0                       |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0x0                        |
+|                                        |             |          |                                                            |user=0x2be5                                       |
+|rule_not_vacuous                        |Not violated |0         |Assert message: sanity check for rule Using general requ... |CallbackBase=30587                                |
+|                                        |(sat)        |          |                                                            |CallbackNoop=30585                                |
+|                                        |             |          |                                                            |CallbackShim=30588                                |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=30589                         |
+|                                        |             |          |                                                            |SimpleToken=30590                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=30586                    |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=2                   |
+|                                        |             |          |                                                            |certoraInvF.selector=157198259                    |
+|                                        |             |          |                                                            |invariantCalldata=                                |
+|                                        |             |          |                                                            |                                                  |
+|                                        |             |          |                                                            |invariantCalldata.length=68                       |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=0                      |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=0                  |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0x0                   |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=0                   |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=0                     |
+|                                        |             |          |                                                            |invariantEnv.block.number=0                       |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=0                    |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x502b                    |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0x0                        |
+|                                        |             |          |                                                            |user=0x56c5                                       |
+|rule_not_vacuous                        |Not violated |0         |Assert message: sanity check for rule Using general requ... |CallbackBase=0xbffffffffffffffffffffffffffffffffff|
+|                                        |(sat)        |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |CallbackNoop=2^158                                |
+|                                        |             |          |                                                            |CallbackShim=0xdffffffffffffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffff                                             |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=2^157                         |
+|                                        |             |          |                                                            |SimpleToken=2^159                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=0x60000000000000000000000|
+|                                        |             |          |                                                            |00000000000000000                                 |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=2                   |
+|                                        |             |          |                                                            |certoraInvF.selector=157198259                    |
+|                                        |             |          |                                                            |invariantCalldata=...                             |
+|                                        |             |          |                                                            |invariantCalldata.length=2^254 + 33               |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=2^255 - 1              |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=2^255 - 1          |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0x7fffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffffffff                              |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=2^255 - 1           |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=2^255 - 1             |
+|                                        |             |          |                                                            |invariantEnv.block.number=2^255 - 1               |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=2^255 - 1            |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x7fffffffffffffffffffffff|
+|                                        |             |          |                                                            |ffffffffffffffff                                  |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0x7ffffffffffffffffffffffff|
+|                                        |             |          |                                                            |fffffffffffffff                                   |
+|totalSupplyIsSumOfBalancesSimpleTokenTok|Violated     |2         |Assert message: assert weak invariant in post-state         |no local variables                                |
+|en1                                     |(sat)        |          |                                                            |                                                  |
+|rule_not_vacuous                        |Not violated |0         |Assert message: sanity check for rule Using general requ... |CallbackBase=37378                                |
+|                                        |(sat)        |          |                                                            |CallbackNoop=37376                                |
+|                                        |             |          |                                                            |CallbackShim=37379                                |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=37380                         |
+|                                        |             |          |                                                            |SimpleToken=37381                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=37377                    |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=2                   |
+|                                        |             |          |                                                            |certoraInvF.selector=2835717307                   |
+|                                        |             |          |                                                            |invariantCalldata=(invalid UTF-8)                 |
+|                                        |             |          |                                                            |invariantCalldata.length=68                       |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=0                      |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=0                  |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0x0                   |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=0                   |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=0                     |
+|                                        |             |          |                                                            |invariantEnv.block.number=0                       |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=0                    |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x2ce4                    |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0x0                        |
+|                                        |             |          |                                                            |user=0x2ce4                                       |
+|rule_not_vacuous                        |Not violated |0         |Assert message: sanity check for rule Using general requ... |CallbackBase=24100                                |
+|                                        |(sat)        |          |                                                            |CallbackNoop=24098                                |
+|                                        |             |          |                                                            |CallbackShim=24101                                |
+|                                        |             |          |                                                            |ReentrancyGuardDemo=24102                         |
+|                                        |             |          |                                                            |SimpleToken=24103                                 |
+|                                        |             |          |                                                            |UnstoppableVault_Harness=24099                    |
+|                                        |             |          |                                                            |certoraInvF.contract=SimpleToken                  |
+|                                        |             |          |                                                            |certoraInvF.isFallback=false                      |
+|                                        |             |          |                                                            |certoraInvF.isPayable=false                       |
+|                                        |             |          |                                                            |certoraInvF.isPure=false                          |
+|                                        |             |          |                                                            |certoraInvF.isView=false                          |
+|                                        |             |          |                                                            |certoraInvF.numberOfArguments=3                   |
+|                                        |             |          |                                                            |certoraInvF.selector=599290589                    |
+|                                        |             |          |                                                            |invariantCalldata=                                |
+|                                        |             |          |                                                            |9\                                                |
+|                                        |             |          |                                                            |9\                                                |
+|                                        |             |          |                                                            |invariantCalldata.length=100                      |
+|                                        |             |          |                                                            |invariantEnv.block.basefee=0                      |
+|                                        |             |          |                                                            |invariantEnv.block.blobbasefee=0                  |
+|                                        |             |          |                                                            |invariantEnv.block.coinbase=0x0                   |
+|                                        |             |          |                                                            |invariantEnv.block.difficulty=0                   |
+|                                        |             |          |                                                            |invariantEnv.block.gaslimit=0                     |
+|                                        |             |          |                                                            |invariantEnv.block.number=0                       |
+|                                        |             |          |                                                            |invariantEnv.block.timestamp=0                    |
+|                                        |             |          |                                                            |invariantEnv.msg.sender=0x0                       |
+|                                        |             |          |                                                            |invariantEnv.msg.value=0                          |
+|                                        |             |          |                                                            |invariantEnv.tx.origin=0x0                        |
+|                                        |             |          |                                                            |user=0xffffffffffffffffffffffffffffffffffffdead   |
+|ghostMatchesStorageSimpleTokenToken1    |Not violated |1         |                                                            |no local variables                                |
+|                                        |(unsat)      |          |                                                            |                                                  |
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
+
+Failures summary:
+Failed on invariant_not_trivial_postcondition:
+Assert message: assert weak invariant in post-state
+
+ sanity check (trivial invariant) for rule Induction base: After the constructor
+Failed on transfer(address,uint256):
+Assert message: assert weak invariant in post-state
+
+Invariant breached
+Failed on transferFrom(address,address,uint256):
+Assert message: assert weak invariant in post-state
+
+Invariant breached
+Failed on rule_not_vacuous:
+Assert message: sanity check for rule Induction base: Af...
+
+sanity check (vacuity of rule) for rule Induction base: After the constructor
+Failed on invariant_not_trivial_postcondition:
+Assert message: assert weak invariant in post-state
+
+ sanity check (trivial invariant) for rule Induction base: After the constructor
+Failed on invariant_not_trivial_postcondition:
+Assert message: assert weak invariant in post-state
+
+ sanity check (trivial invariant) for rule Using general requirements
+Failed on invariant_not_trivial_postcondition:
+Assert message: assert weak invariant in post-state
+
+ sanity check (trivial invariant) for rule Using general requirements
+Failed on rule_not_vacuous:
+Assert message: sanity check for rule Induction base: Af...
+
+sanity check (vacuity of rule) for rule Induction base: After the constructor
+Failed on invariant_not_trivial_postcondition:
+Assert message: assert weak invariant in post-state
+
+ sanity check (trivial invariant) for rule Using general requirements
+Failed on rule_not_vacuous:
+Assert message: sanity check for rule Using general requ...
+
+sanity check (vacuity of rule) for rule Using general requirements
+Failed on rule_not_vacuous:
+Assert message: sanity check for rule Using general requ...
+
+sanity check (vacuity of rule) for rule Using general requirements
+Failed on totalSupplyIsSumOfBalancesSimpleTokenToken1:
+Assert message: assert weak invariant in post-state
+Violated for: 
+transfer(address,uint256),
+transferFrom(address,address,uint256)
+
+Failed on rule_not_vacuous:
+Assert message: sanity check for rule Using general requ...
+
+sanity check (vacuity of rule) for rule Using general requirements
+Failed on rule_not_vacuous:
+Assert message: sanity check for rule Using general requ...
+
+sanity check (vacuity of rule) for rule Using general requirements
+
+Done 0m
+Event reporter: all events were sent without errors
+Reports in file:///home/james/cvlruns/code/damn-vulnerable-defi.1768254694/emv-1-certora-12-Jan--13-51/Reports
+Final report in emv-1-certora-12-Jan--13-51/Reports/FinalResults.html
+fnord
+{'files': ['src/unstoppable/SimpleToken.sol', 'src/unstoppable/certora/harness/CallbackBase.sol', 'src/unstoppable/certora/harness/CallbackNoop.sol', 'src/unstoppable/certora/harness/CallbackShim.sol', 'src/unstoppable/certora/harness/ReentrancyGuardDemo.sol', 'src/unstoppable/certora/harness/UnstoppableVault_Harness.sol'], 'link': ['CallbackShim:targetVault=UnstoppableVault_Harness', 'UnstoppableVault_Harness:asset=SimpleToken', 'UnstoppableVault_Harness:loanReceiver=CallbackNoop'], 'packages': ['@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts', '@openzeppelin/contracts-upgradeable/contracts/=lib/openzeppelin-contracts-upgradeable/contracts', '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts', '@safe-global/safe-smart-account/=lib/safe-smart-account', '@uniswap/v2-core/=lib/v2-core', '@uniswap/v2-periphery/=lib/v2-periphery', '@uniswap/v3-core/=lib/v3-core', '@uniswap/v3-periphery/=lib/v3-periphery', 'ds-test/=lib/solmate/lib/ds-test/src', 'ds-test/src/=lib/solmate/lib/ds-test/src', 'erc4626-tests/=lib/openzeppelin-contracts-upgradeable/lib/erc4626-tests', 'forge-gas-snapshot/=lib/permit2/lib/forge-gas-snapshot/src', 'forge-gas-snapshot/src/=lib/permit2/lib/forge-gas-snapshot/src', 'forge-std/=lib/forge-std/src', 'forge-std/src/=lib/forge-std/src', 'halmos-cheatcodes/=lib/openzeppelin-contracts-upgradeable/lib/halmos-cheatcodes/src', 'halmos-cheatcodes/src/=lib/openzeppelin-contracts-upgradeable/lib/halmos-cheatcodes/src', 'multicall/=lib/multicall/src', 'multicall/src/=lib/multicall/src', 'murky/=lib/murky/src', 'murky/src/=lib/murky/src', 'openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable', 'openzeppelin-contracts/=lib/openzeppelin-contracts', 'permit2/=lib/permit2/src', 'permit2/src/=lib/permit2/src', 'safe-smart-account/=lib/safe-smart-account', 'solady/=lib/solady/src', 'solady/src/=lib/solady/src', 'solmate/=lib/solmate/src', 'solmate/src/=lib/solmate/src', 'v2-core/=lib/v2-core/contracts', 'v2-core/contracts/=lib/v2-core/contracts', 'v2-periphery/=lib/v2-periphery/contracts', 'v2-periphery/contracts/=lib/v2-periphery/contracts', 'v3-core/=lib/v3-core/contracts', 'v3-core/contracts/=lib/v3-core/contracts', 'v3-periphery/=lib/v3-periphery/contracts', 'v3-periphery/contracts/=lib/v3-periphery/contracts'], 'packages_path': 'node_modules', 'solc': 'solc8.25', 'solc_allow_path': 'src', 'test_condition': 'True', 'package_version_for_build_cache': 'local script version'}
+
+
+Compiling src/unstoppable/SimpleToken.sol...
+Compiling src/unstoppable/SimpleToken.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/CallbackBase.sol...
+Compiling src/unstoppable/certora/harness/CallbackBase.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/CallbackNoop.sol...
+Compiling src/unstoppable/certora/harness/CallbackNoop.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/CallbackShim.sol...
+Compiling src/unstoppable/certora/harness/CallbackShim.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/ReentrancyGuardDemo.sol...
+Compiling src/unstoppable/certora/harness/ReentrancyGuardDemo.sol to expose internal function information and local variables...
+Compiling src/unstoppable/certora/harness/UnstoppableVault_Harness.sol...
+Compiling src/unstoppable/certora/harness/UnstoppableVault_Harness.sol to expose internal function information and local variables...
+Verifier run command:
+ java -jar /home/james/opt/certora/emv.jar -contractRecursionLimit 2 -assumeUnwindCond -contract SimpleToken -ruleSanityChecks basic -buildDirectory .certora_internal/26_01_12_13_51_49_136962d901
+ERROR: Execution of command "java -jar /home/james/opt/certora/emv.jar -contractRecursionLimit 2 -assumeUnwindCond -contract SimpleToken -ruleSanityChecks basic -buildDirectory .certora_internal/26_01_12_13_51_49_136962d901" terminated with exitcode 100.
+
+run_certora failed (code 1)
+
+Command exited with non-zero status 1
+176.76user 10.47system 0:38.28elapsed 489%CPU (0avgtext+0avgdata 2215804maxresident)k
+244550inputs+85483outputs (24010major+2610403minor)pagefaults 0swaps
+make: *** [Makefile:51: st] Error 1
+Script done.
+remotereport is: code/damn-vulnerable-defi.1768254694/emv-1-certora-12-Jan--13-51/Reports
+fullcmd:
+script /home/james/cvlruns/output/damn-vulnerable-defi.1768254694/results.txt -c 'cd /home/james/cvlruns/code/damn-vulnerable-defi.1768254694 && make st'
+{"id":"ffy9ANtQbXKc","time":1768254748,"expires":1768297948,"event":"message","topic":"ah74UTDYnQIseq5K","message":"script /home/james/cvlruns/output/damn-vulnerable-defi.1768254694/results.txt -c 'cd /home/james/cvlruns/code/damn-vulnerable-defi.1768254694 \u0026\u0026 make st' finished"}
+
+Command exit status: 0
+Script done on Mon Jan 12 13:52:28 2026

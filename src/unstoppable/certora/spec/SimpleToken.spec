@@ -1,37 +1,42 @@
-using SimpleToken as token1;
+using SimpleToken as SimpleTokenToken1;
 
 methods {
-    function token1.balanceOf(address account) external returns (uint256) envfree;
-    function token1.totalSupply() external returns (uint256) envfree;
+    function SimpleTokenToken1.balanceOf(address account) external returns (uint256) envfree;
+    function SimpleTokenToken1.totalSupply() external returns (uint256) envfree;
 }
 
-ghost mapping(address => uint256) ghostBalancesToken1;
-
-ghost mathint sumOfBalancesToken1;
-
-hook Sstore token1._balances[KEY address addr] uint256 newValue (uint256 oldValue) {
-    sumOfBalancesToken1 = sumOfBalancesToken1 + newValue - oldValue;
-    ghostBalancesToken1[addr] = newValue;
+ghost mapping(address => uint256) ghostBalancesSimpleTokenToken1 {
+    init_state axiom (forall address a. ghostBalancesSimpleTokenToken1[a] == 0) && (usum address a. ghostBalancesSimpleTokenToken1[a]) == 0;
 }
 
-invariant ghostMatchesStorageToken1(address user)
-    ghostBalancesToken1[user] == token1.balanceOf(user)
-    {
-        preserved constructor() {
-            require(forall address a. ghostBalancesToken1[a] == 0, "all zero ghost balances");
-        }
-    }
+hook Sstore SimpleTokenToken1._balances[KEY address addr] uint256 newValue (uint256 oldValue) {
+    // mathint nv = newValue;
+    // mathint ov = oldValue;
+    // mathint newBalance = sumOfBalancesSimpleTokenToken1 + nv - ov;
 
-invariant totalSupplyIsSumOfBalancesToken1()
-    token1.totalSupply() == sumOfBalancesToken1
-    {
-        preserved constructor() {
-            require(sumOfBalancesToken1 == 0, "sum of balances starts at zero");
-        }
-    }
+    // // require(newBalance < max_uint256, "not interested in overflows");
+    // sumOfBalancesSimpleTokenToken1 = newBalance;
+    ghostBalancesSimpleTokenToken1[addr] = newValue;
+}
 
-function requireAllInvariantsToken1() {
+hook Sload uint256 val SimpleTokenToken1._balances[KEY address a] {
+    // mathint nv = newValue;
+    // mathint ov = oldValue;
+    // mathint newBalance = sumOfBalancesSimpleTokenToken1 + nv - ov;
+
+    // // require(newBalance < max_uint256, "not interested in overflows");
+    // sumOfBalancesSimpleTokenToken1 = newBalance;
+    require ghostBalancesSimpleTokenToken1[a] == val;
+}
+
+invariant ghostMatchesStorageSimpleTokenToken1(address user)
+    ghostBalancesSimpleTokenToken1[user] == SimpleTokenToken1._balances[user];
+
+invariant totalSupplyIsSumOfBalancesSimpleTokenToken1()
+    SimpleTokenToken1.totalSupply() == (usum address a. ghostBalancesSimpleTokenToken1[a]);
+
+function requireAllInvariantsSimpleTokenToken1() {
     address a;
-    requireInvariant ghostMatchesStorageToken1(a);
-    requireInvariant totalSupplyIsSumOfBalancesToken1();
+    requireInvariant ghostMatchesStorageSimpleTokenToken1(a);
+    requireInvariant totalSupplyIsSumOfBalancesSimpleTokenToken1();
 }

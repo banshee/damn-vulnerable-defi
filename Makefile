@@ -11,16 +11,23 @@ files = \
         "src/unstoppable/certora/harness/CallbackBase.sol" \
         "src/unstoppable/SimpleToken.sol" \
 
-common_options = \
+xcommon_options = \
         --link UnstoppableVault_Harness:asset=SimpleToken \
         --link CallbackShim:targetVault=UnstoppableVault_Harness \
-        --build_cache \
         --solc solc8.25 \
         --solc_allow_path src \
         --rule_sanity basic \
         --optimistic_loop \
         --prover_args '-enableStorageSplitting false' \
-        --wait_for_results all \
+        --contract_recursion_limit 2 \
+
+common_options = \
+        --link UnstoppableVault_Harness:asset=SimpleToken \
+        --link CallbackShim:targetVault=UnstoppableVault_Harness \
+        --solc solc8.25 \
+        --solc_allow_path src \
+        --rule_sanity basic \
+        --optimistic_loop \
         --contract_recursion_limit 2 \
 
 .PHONY: isValidLoan isValidLoanCB s SoladyReentrantGuard
@@ -48,7 +55,7 @@ st:
 
 x:
 	${runner_with_options} $(files) \
-        --verify UnstoppableVault_Harness:$(certoradir)/spec/x.spec \
+	--link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
         --parametric_contracts UnstoppableVault_Harness \
-        --rule x \
+        --verify UnstoppableVault_Harness:$(certoradir)/spec/UnstoppableVaultAsToken.spec \
 
