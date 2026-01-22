@@ -73,23 +73,36 @@ methods {
 }
 
 function eqExceptSender(env e1, env e2) returns (bool) {
-    return
-    // Block context
-    e1.msg.value == e2.msg.value && e1.tx.origin == e2.tx.origin && e1.block.timestamp == e2.block.timestamp && e1.block.number == e2.block.number && e1.block.difficulty == e2.block.difficulty && e1.block.gaslimit == e2.block.gaslimit && e1.block.coinbase == e2.block.coinbase && e1.block.basefee == e2.block.basefee && e1.block.blobbasefee == e2.block.blobbasefee;
+    return e1.msg.value == e2.msg.value && e1.tx.origin == e2.tx.origin && e1.block.timestamp == e2.block.timestamp && e1.block.number == e2.block.number && e1.block.difficulty == e2.block.difficulty && e1.block.gaslimit == e2.block.gaslimit && e1.block.coinbase == e2.block.coinbase && e1.block.basefee == e2.block.basefee && e1.block.blobbasefee == e2.block.blobbasefee;
+}
+
+function envWithSender(env e, address newSender) returns env {
+    env newE;
+    
+    // 1. Constrain the sender to be the new address
+    require newE.msg.sender == newSender;
+
+    // 2. Constrain all other fields to match the original environment 'e'
+    require newE.msg.value == e.msg.value;
+    require newE.tx.origin == e.tx.origin;
+    require newE.block.timestamp == e.block.timestamp;
+    require newE.block.number == e.block.number;
+    require newE.block.difficulty == e.block.difficulty;
+    require newE.block.gaslimit == e.block.gaslimit;
+    require newE.block.coinbase == e.block.coinbase;
+    require newE.block.basefee == e.block.basefee;
+    require newE.block.blobbasefee == e.block.blobbasefee;
+
+    return newE;
 }
 
 hook CODESIZE() uint v {
     require v != assert_uint256(currentContract);
 }
 
-function makeArbitraryCall(method f, address a) {
-    env e1;
-    require e1.msg.sender == a;
-    calldataarg args;
-    f(e1, args);
-}
-
 rule loanThenOperationThenLoanWorks(method f, method g) filtered { f -> !f.isView, g -> !g.isView } {
+    storage initialStorage = lastStorage;
+
     address player;
 
     env e;
@@ -98,27 +111,20 @@ rule loanThenOperationThenLoanWorks(method f, method g) filtered { f -> !f.isVie
 
     require asset == currentContract.asset();
     address feeRecipient = currentContract.feeRecipient();
+    address owner = currentContract.owner();
 
-    require notEqualAndNotZero5(player, currentContract, currentContract.feeRecipient(), loanReceiver, currentContract.owner()), "addresses must be different";
-
-    require forall address a1. currentContract.allowance[a1][player] == 0 && asset.allowance[a1][player] == 0, "player has no allowances";
-    require forall address a1. currentContract.allowance[a1][loanReceiver] == 0 && asset.allowance[a1][loanReceiver] == 0, "loan receiver has no allowances";
-
-    require currentContract.totalAssets() == ONE_MILLION_ETH(), "defined in the test";
-    require currentContract.balanceOf(e, player) == 0, "defined in the test";
-    require currentContract.balanceOf(e, currentContract.owner()) == ONE_MILLION_ETH(), "defined in the test";
-
-    require asset.balanceOf(player) == TEN_ETH(), "defined in the test as the amount owned by player";
-    require asset.balanceOf(loanReceiver) == TEN_ETH(), "skip transferring from player to the loan receiver, defined in the test";
-    require asset.balanceOf(feeRecipient) == 0, "avoid overflow issues";
+    require notEqualAndNotZero5(player, currentContract, feeRecipient, loanReceiver, owner), "addresses must be different";
 
     require e.msg.sender == player;
 
     flashLoan(e, loanReceiver, asset, amount, data);
 
     // See if are operations that can disable making loans
-    makeArbitraryCall(f, player);
-    makeArbitraryCall(g, player);
+    calldataarg args;
+    f(e, args) at initialStorage;
+
+    require currentContract.maxFlashLoan(e, asset) >= amount, "after operation, flash loan should still be possible";
+    // require asset.balanceOf(loanReceiver) < MAX_UINT256() * 5 / 100, "loan receiver should not overflow";
 
     flashLoan@withrevert(e, loanReceiver, asset, amount, data);
     bool loan2Reverted = lastReverted;
