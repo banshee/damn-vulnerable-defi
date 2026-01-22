@@ -1,0 +1,2 @@
+[compiler.solc]
+exclude_paths = [".certora_internal"]

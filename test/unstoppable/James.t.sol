@@ -98,15 +98,20 @@ contract UnstoppableChallenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_unstoppable() public runAsPlayer {
-        uint256 amount = INITIAL_PLAYER_TOKEN_BALANCE / 64;
-        uint256 _tokenBalance = token.balanceOf(address(player));
-        token.approve(address(vault), amount);
-        vault.deposit(amount, address(player));
-        uint256 tokenBalance_ = token.balanceOf(address(player));
-        uint256 shares = vault.balanceOf(address(player));
-        console2.log("Player deposited %e tokens into the vault, balance before and after: %e, %e", amount, _tokenBalance, tokenBalance_);
-        console2.log("player shares: %e",shares);
+    function test_unstoppable() public checkSolvedByPlayer{
+        // uint256 amount = INITIAL_PLAYER_TOKEN_BALANCE / 64;
+        // uint256 _tokenBalance = token.balanceOf(address(player));
+        // token.approve(address(vault), type(uint256).max);
+        // vault.deposit(amount, address(player));
+        // uint256 tokenBalance_ = token.balanceOf(address(player));
+        // uint256 shares = vault.balanceOf(address(player));
+        // vault.deposit(1 ether, address(player));
+        // vault.withdraw(1 ether, address(vault), address(player));
+        // console2.log("totalSupply: %e", vault.totalSupply());
+        // console2.log("totalAssets: %e", vault.totalAssets());
+        // console2.log("totalAssets eq totalSupply: %s", vault.totalAssets() == vault.totalSupply());
+        // console2.log("Player deposited %e tokens into the vault, balance before and after: %e, %e", amount, _tokenBalance, tokenBalance_);
+        // console2.log("player shares: %e",shares);
     }
 
     /**

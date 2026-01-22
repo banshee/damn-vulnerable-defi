@@ -6,6 +6,7 @@ import {Test, console} from "forge-std/Test.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 import {UnstoppableVault} from "src/unstoppable/UnstoppableVault.sol";
 import {UnstoppableMonitor} from "../../src/unstoppable/UnstoppableMonitor.sol";
+import {console2} from "forge-std/console2.sol";
 
 contract UnstoppableChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -91,7 +92,9 @@ contract UnstoppableChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_unstoppable() public checkSolvedByPlayer {
-        
+        token.approve(address(vault), 1);
+        vault.deposit(1, address(player));
+        // vault.withdraw(1, address(vault), address(player));
     }
 
     /**

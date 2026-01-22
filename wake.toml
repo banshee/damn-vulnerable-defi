@@ -1,0 +1,37 @@
+[compiler.solc]
+exclude_paths = [
+    "lib",
+    "script",
+    "venv",
+    "node_modules",
+    ".venv",
+    "test",
+    ".certora_internal",
+]
+via_IR = false
+
+[compiler.solc.optimizer]
+enabled = true
+runs = 200
+
+[compiler.solc.metadata]
+append_CBOR = true
+use_literal_content = false
+bytecode_hash = "none"
+
+[detectors]
+exclude = []
+ignore_paths = ["test", "venv", ".venv"]
+exclude_paths = ["lib", "script", "venv", "node_modules", ".venv", "test"]
+
+[testing]
+cmd = "anvil"
+
+[testing.anvil]
+cmd_args = "--prune-history 100 --transaction-block-keeper 10 --steps-tracing --silent"
+
+[testing.ganache]
+cmd_args = "-k istanbul -q"
+
+[testing.hardhat]
+cmd_args = ""
