@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import "equality.spec";
-import "Constants.spec";
-import "isValidLoanErcInvariants.spec";
 
+using DamnValuableToken as asset;
+using UnstoppableVault as vault;
 using SimpleFlashReceiver as loanReceiver;
 
 methods {
@@ -14,11 +14,7 @@ methods {
     function owner() external returns (address) envfree;
     function totalAssets() external returns (uint256) envfree;
     function totalSupply() external returns (uint256) envfree;
-}
-
-// this is for the Solady reentrancy guard check.  Just make sure codesize is never equal to the contract address.
-hook CODESIZE() uint v {
-    require v != assert_uint256(currentContract), "reentrancy guard matches CODESIZE with the contract address";
+    function asset.balanceOf(address account) external returns (uint256) envfree;
 }
 
 function sharesAndAssetsBalance() returns (bool) {
@@ -35,8 +31,6 @@ invariant sharesAndAssetsBalanceInvariant()
     }
 
 rule loanThenOperationThenLoanWorks(method f) filtered { f -> !f.isView } {
-    requireAllErc20Invariants();
-
     storage initialStorage = lastStorage;
 
     address player;
@@ -66,7 +60,10 @@ rule loanThenOperationThenLoanWorks(method f) filtered { f -> !f.isView } {
     // to do the loan.
     require currentContract.maxFlashLoan(e, asset) >= amount, "we dont care about operations that reduce the balance of the vault itself";
 
-    require balanceOf(loanReceiver) > amount / 20 + 1, "make sure loanReceiver has a high enough balance to pay any fees";
+    mathint fee = amount / 20 + 1;
+    mathint loanReceiverBalance = asset.balanceOf(loanReceiver);
+    require loanReceiverBalance > fee, "make sure loanReceiver has a high enough balance to pay any fees";
+    require loanReceiverBalance + amount + fee < 2 ^ 256, "make sure loanReceiver doesn't overflow when we add the amount and fee";
 
     flashLoan@withrevert(e, loanReceiver, asset, amount, data);
     bool loan2Reverted = lastReverted;
