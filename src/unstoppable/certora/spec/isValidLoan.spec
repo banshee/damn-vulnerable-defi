@@ -8,6 +8,7 @@ using SimpleFlashReceiver as loanReceiver;
 
 methods {
     function asset() external returns (address) envfree;
+    function balanceOf(address account) external returns (uint256) envfree;
     function convertToShares(uint256 assets) external returns (uint256) envfree;
     function feeRecipient() external returns (address) envfree;
     function owner() external returns (address) envfree;
@@ -17,7 +18,7 @@ methods {
 
 // this is for the Solady reentrancy guard check.  Just make sure codesize is never equal to the contract address.
 hook CODESIZE() uint v {
-    require v != assert_uint256(currentContract);
+    require v != assert_uint256(currentContract), "reentrancy guard matches CODESIZE with the contract address";
 }
 
 function sharesAndAssetsBalance() returns (bool) {
@@ -25,12 +26,15 @@ function sharesAndAssetsBalance() returns (bool) {
 }
 
 invariant sharesAndAssetsBalanceInvariant()
-    sharesAndAssetsBalance();
+    sharesAndAssetsBalance()
+    {
+        preserved with (env e) {
+            require e.msg.sender != vault, "ignore messages from the vault itself";
+            require vault.feeRecipient() != vault, "there should be a guard to prevent this in the contract";
+        }
+    }
 
-rule loanThenOperationThenLoanWorks(method f)
-filtered {
-    f -> !f.isView
-} {
+rule loanThenOperationThenLoanWorks(method f) filtered { f -> !f.isView } {
     requireAllErc20Invariants();
 
     storage initialStorage = lastStorage;
@@ -47,7 +51,7 @@ filtered {
 
     require notEqualAndNotZero5(player, currentContract, feeRecipient, loanReceiver, owner), "addresses must be different";
 
-    require e.msg.sender == player;
+    require e.msg.sender == player, "send messages as player";
 
     flashLoan(e, loanReceiver, asset, amount, data);
 
@@ -61,6 +65,8 @@ filtered {
     // but that may mask other problems.  Just make sure that the pool still has enough balance
     // to do the loan.
     require currentContract.maxFlashLoan(e, asset) >= amount, "we dont care about operations that reduce the balance of the vault itself";
+
+    require balanceOf(loanReceiver) > amount / 20 + 1, "make sure loanReceiver has a high enough balance to pay any fees";
 
     flashLoan@withrevert(e, loanReceiver, asset, amount, data);
     bool loan2Reverted = lastReverted;

