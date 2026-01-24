@@ -9,7 +9,6 @@ files = \
         "src/unstoppable/certora/harness/SimpleFlashReceiver.sol" \
 
 common_options = \
-        --link UnstoppableVault:asset=DamnValuableToken \
         --auto_dispatcher \
         --solc solc8.25 \
         --solc_allow_path src \
@@ -17,10 +16,16 @@ common_options = \
         --optimistic_loop \
         --contract_recursion_limit 2 \
 
-.PHONY: isValidLoan
+.PHONY: isValidLoan tiny
+
+tiny:
+	${runner_with_options} \
+	"src/unstoppable/certora/harness/Tiny.sol" \
+	--verify Tiny:$(certoradir)/spec/Tiny.spec \
 
 isValidLoan:
 	${runner_with_options} $(files) \
+        --link UnstoppableVault:asset=DamnValuableToken \
         --verify UnstoppableVault:$(certoradir)/spec/isValidLoan.spec \
         --parametric_contracts UnstoppableVault DamnValuableToken \
 

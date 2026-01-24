@@ -1,4 +1,4 @@
-ghost mapping(address => mathint) mirrorBalances {
+ghost mapping(address => mathint) mirrorBalances_{{ contractname }} {
     init_state axiom (forall address a. mirrorBalances[a] == 0) && (usum address a. mirrorBalances[a]) == 0;
 }
 
@@ -15,3 +15,10 @@ invariant totalSupplyIsSumOfBalances()
     
 invariant balancesMatch(address a)
     mirrorBalances[a] == currentContract.balances[a];
+
+
+function requireAllInvariants() {
+    address a;
+    requireInvariant balancesMatch(a);
+    requireInvariant totalSupplyIsSumOfBalances();
+}
