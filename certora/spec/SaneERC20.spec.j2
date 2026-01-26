@@ -1,0 +1,23 @@
+ghost mapping(address => mathint) mirrorBalances_{{ contractname }} {
+    init_state axiom (forall address a. mirrorBalances_{{ contractname }}[a] == 0) && (usum address a. mirrorBalances_{{ contractname }}[a]) == 0;
+}
+
+hook Sstore {{ contractname }}.{{ balances | default('balances') }}[KEY address a] uint256 newVal {
+    mirrorBalances_{{ contractname }}[a] = newVal;
+}
+
+hook Sload uint256 val {{ contractname }}.{{ balances | default('balances') }}[KEY address a] {
+    require mirrorBalances_{{ contractname }}[a] == val, "mirror balance matches loaded value";
+}
+
+invariant totalSupplyIsSumOfBalances_{{ contractname }}()
+    {{ contractname }}.totalSupply == (usum address a. mirrorBalances_{{ contractname }}[a]);
+    
+invariant balancesMatch_{{ contractname }}(address a)
+    mirrorBalances_{{ contractname }}[a] == {{ contractname }}.{{ balances | default('balances') }}[a];
+
+function requireAllInvariants_{{ contractname }}() {
+    address a;
+    requireInvariant balancesMatch_{{ contractname }}(a);
+    requireInvariant totalSupplyIsSumOfBalances_{{ contractname }}();
+}
