@@ -10,7 +10,6 @@ contract SimpleFlashReceiver is IERC3156FlashBorrower {
         keccak256("IERC3156FlashBorrower.onFlashLoan");
 
     error NotEnoughBalance();
-    error NoFeeAllowedInTest();
 
     function onFlashLoan(
         address initiator,
@@ -20,9 +19,6 @@ contract SimpleFlashReceiver is IERC3156FlashBorrower {
         bytes calldata data
     ) external virtual returns (bytes32) {
         uint256 balanceDuringLoan = ERC20(token).balanceOf(address(this));
-        // if (fee != 0) {
-        //     revert NoFeeAllowedInTest();
-        // }
         if (balanceDuringLoan < amount + fee) {
             revert NotEnoughBalance();
         }

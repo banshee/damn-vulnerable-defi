@@ -1,0 +1,35 @@
+include Makefile.common_options
+
+files = \
+        src/naive-receiver/BasicForwarder.sol
+        src/naive-receiver/NaiveReceiverPool.sol
+        src/naive-receiver/Multicall.sol
+        src/naive-receiver/FlashLoanReceiver.sol
+
+default:
+	${runner_with_options} $(files) \
+	--verify NaiveReceiverPool:$(certoradir)/spec/Tiny.spec \
+
+isValidLoan:
+	${runner_with_options} $(files) \
+        --link UnstoppableVault:asset=DamnValuableToken \
+        --verify UnstoppableVault:$(certoradir)/spec/isValidLoan.spec \
+        --parametric_contracts UnstoppableVault DamnValuableToken \
+
+break:
+	${runner_with_options} $(files) \
+        --verify UnstoppableVault_Harness:$(certoradir)/spec/breakTheContract.spec \
+        --parametric_contracts UnstoppableVault_Harness \
+
+st:
+	${runner_with_options} $(files) \
+	--link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
+        --parametric_contracts SimpleToken \
+        --verify SimpleToken:$(certoradir)/spec/SimpleToken.spec \
+
+x:
+	${runner_with_options} $(files) \
+	--link UnstoppableVault_Harness:loanReceiver=CallbackNoop \
+        --parametric_contracts UnstoppableVault_Harness \
+        --verify UnstoppableVault_Harness:$(certoradir)/spec/UnstoppableVaultAsToken.spec \
+
