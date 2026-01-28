@@ -1,4 +1,4 @@
-certoradir = src/unstoppable/certora
+certoradir = certora
 certoraRun = . ~/.secrets/1passwordtoken.env && time op run --env-file=$(HOME)/homedir/.env.1password -- mamba run -n certora certoraRun
 compile_only = $(certoraRun) --compilation_steps_only
 runner_with_options = ${certoraRun} $(common_options) $(if $(COMPILE_ONLY),--compilation_steps_only,)
