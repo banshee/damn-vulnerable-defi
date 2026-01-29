@@ -1,0 +1,16 @@
+files = \
+        "certora/harness/Bytes4Check.sol" \
+
+common_options = \
+        --auto_dispatcher \
+        --solc solc8.25 \
+        --solc_allow_path src \
+        --rule_sanity basic \
+        --optimistic_loop \
+        --contract_recursion_limit 2 \
+        --optimistic_hashing \
+        --hashing_length_bound 128
+
+bytes4:
+	${runner_with_options} ${files} \
+	--verify Bytes4Check:$(certoradir)/spec/Bytes4Check.spec \
