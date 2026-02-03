@@ -1,4 +1,4 @@
-files = \
+bytes4files = \
         "certora/harness/Bytes4Check.sol" \
 
 common_options = \
@@ -12,5 +12,9 @@ common_options = \
         --hashing_length_bound 128
 
 bytes4:
-	${runner_with_options} ${files} \
+	${runner_with_options} ${bytes4files} \
 	--verify Bytes4Check:$(certoradir)/spec/Bytes4Check.spec \
+
+asm:
+	${runner_with_options} certora/harness/AsmCall.sol \
+	--verify AsmCall:src/certora/spec/AsmCall.spec \

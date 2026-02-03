@@ -2,58 +2,39 @@
 pragma solidity ^0.8.25;
 
 contract Bytes4Check {
-    error BadSelector();
-    error BadTarget();
-
     struct Request {
-        bytes inputData;
+        bytes bytesField;
     }
 
-    function simpleReturnFromBytes(bytes calldata b) public pure returns (bytes4) {
+    bytes4 extractedBytes;
+
+    function extract4Bytes(bytes calldata b) public returns (bytes4) {
+        extractedBytes = bytes4(b[:4]);
+        justUsedToGetTheUiToShowAField(extractedBytes);
         return bytes4(b[:4]);
     }
 
-    function simpleReturnFromRequest(Request calldata r) public returns (bytes4) {
-        selectorFound = bytes4(r.inputData[:4]);
-        return bytes4(selectorFound);
+    function extract4BytesFromRequest(
+        Request calldata r
+    ) public returns (bytes4) {
+        extractedBytes = bytes4(r.bytesField[:4]);
+        justUsedToGetTheUiToShowAField(extractedBytes);
+        return bytes4(extractedBytes);
     }
 
-    bytes4 selectorFound;
-    bytes4 selectorRequested;
-
-    function matchSelector(
-        bytes calldata inputData,
-        bytes4 mySelector
-    ) public returns (bytes4 result) {
-        result = bytes4(inputData[:4]);
-        selectorFound = result;
-        selectorRequested = mySelector;
-        assert(result == mySelector);
-        return result;
+    function bytes4ToBytes(bytes4 b) public returns (bytes memory result) {
+        return abi.encodePacked(b);
     }
 
-    bytes4 selectorUsed;
-    address targetUsed;
-
-    function matchSelectorInRequest(
-        Request calldata request,
-        bytes4 mySelector
-    ) public returns (bytes4 result) {
-        result = bytes4(request.inputData[:4]);
-        selectorFound = result;
-        selectorUsed = bytes4(request.inputData[:4]);
-        // if (selectorUsed != mySelector) {
-        //     revert BadSelector();
-        // }
-        return result;
-    }
-
-    function packedSelector(bytes4 mySelector) public pure returns (bytes memory result) {
-        return abi.encodePacked(mySelector);
-    }
-
-    function buildRequest(bytes4 s) public pure returns (Request memory r) {
-        r.inputData = packedSelector(s);
+    function bytes4ToRequestWithBytesField(bytes4 b) public returns (Request memory r) {
+        r.bytesField = abi.encodePacked(b);
         return r;
+    }
+
+    uint32 bogusField;
+
+    function justUsedToGetTheUiToShowAField(bytes4 b) public returns (bytes4) {
+        bogusField += 1;
+        return b;
     }
 }

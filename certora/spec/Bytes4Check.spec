@@ -1,33 +1,15 @@
-rule matchSelector() {
-    bytes inputData;
-    bytes4 mySelector = to_bytes4(0xcafebeef);
+rule extract4Bytes() {
     env e;
-    bytes4 result = matchSelector(e, inputData, mySelector);
-    assert result == mySelector;
+    bytes4 feedFace = to_bytes4(0xfeedface);
+    bytes testBytes = currentContract.bytes4ToBytes(e, feedFace);
+    bytes4 result = currentContract.extract4Bytes(e, testBytes);
+    assert result == feedFace;
 }
 
-rule matchSelectorInRequest() {
-    bytes4 mySelector = to_bytes4(0xcafebeef);
+rule extract4BytesFromRequest() {
     env e;
-    Bytes4Check.Request r = buildRequest(e, mySelector);
-    bytes4 result = matchSelectorInRequest(e, r, mySelector);
-    assert result == mySelector;
-    assert mySelector == currentContract.selectorFound;
-}
-
-rule checkBytes4() {
-    bytes4 mySelector = to_bytes4(0xcafebeef);
-    env e;
-    bytes b = packedSelector(e, mySelector);
-    bytes4 result = simpleReturnFromBytes(e, b);
-    assert result == mySelector;
-}
-
-rule checkBytes4UsingStruct() {
-    bytes4 mySelector = to_bytes4(0xcafebeef);
-    env e;
-    Bytes4Check.Request r = buildRequest(e, mySelector);
-    bytes4 result = simpleReturnFromRequest(e, r);
-    assert currentContract.selectorFound == mySelector;
-    assert result == mySelector;
+    bytes4 feedFace = to_bytes4(0xfeedface);
+    Bytes4Check.Request r = currentContract.bytes4ToRequestWithBytesField(e, feedFace);
+    bytes4 result = currentContract.extract4BytesFromRequest(e, r);
+    assert result == feedFace;
 }

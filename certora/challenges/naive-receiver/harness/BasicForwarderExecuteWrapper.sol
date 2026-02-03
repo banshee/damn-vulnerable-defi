@@ -8,11 +8,6 @@ contract BasicForwarderExecuteWrapper {
     error BadSelector();
     error BadTarget();
 
-    uint256 someField;
-
-    bytes4 selectorUsed;
-    address targetUsed;
-
     bytes someSignature;
 
     function executeWrapper(
@@ -21,19 +16,23 @@ contract BasicForwarderExecuteWrapper {
         bytes4 expectedSelector,
         address expectedTarget
     ) public payable returns (bool success) {
-        selectorUsed = bytes4(request.data[:4]);
-        targetUsed = request.target;
-        if (selectorUsed != expectedSelector) {
+        bytes4 selectorInRequest = bytes4(request.data[:4]);
+        if (selectorInRequest != expectedSelector) {
             revert BadSelector();
         }
         if (request.target != expectedTarget) {
             revert BadTarget();
         }
+        consoleLog(selectorInRequest, request.target);
         return basicForwarder.execute(request, someSignature);
     }
 
+    uint256 shark;
+    function consoleLog(bytes4 b, address a) public {
+        shark++;
+    }
+
     function doStuff() public returns (uint256) {
-        someField += 1;
-        return someField;
+        return 7;
     }
 }

@@ -1,28 +1,28 @@
-// SPDX-License-Identifier: MIT
-// Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;
 
 import {Test, console} from "forge-std/Test.sol";
-import {BasicForwarderExecuteWrapper} from "certora/challenges/naive-receiver/harness/BasicForwarderExecuteWrapper.sol";
-import {BasicForwarder} from "src/naive-receiver/BasicForwarder.sol";
+import {Bytes4Check} from "certora/harness/Bytes4Check.sol";
 
-contract Bytes4Check is Test {
-    Bytes4Check check;
+contract Bytes4CheckTest is Test {
+    Bytes4Check bytes4Check;
 
     function setUp() public {
-        check = new Bytes4Check();
+        bytes4Check = new Bytes4Check();
     }
 
-    function test_stuff() public {
-        bytes4 mySelector = BasicForwarder.basicStuff.selector;
+    function test_extract4Bytes() public {
+        bytes memory testBytes = bytes4Check.bytes4ToBytes(0xfeedface);
 
-        BasicForwarder.Request memory request;
-        request.data = abi.encodePacked(mySelector);
-        request.target = address(basic);
-        request.gas = 10 ether;
+        bytes4 result = bytes4Check.extract4Bytes(testBytes);
 
-        bool result = wrapper.executeWrapper(request, basic, mySelector, address(basic));
+        assertTrue(result == 0xfeedface);
+    }
 
-        assertTrue(result);
+    function test_extract4BytesFromRequest() public {
+        Bytes4Check.Request memory request = bytes4Check
+            .bytes4ToRequestWithBytesField(0xfeedface);
+        bytes4 result = bytes4Check.extract4BytesFromRequest(request);
+
+        assertTrue(result == 0xfeedface);
     }
 }

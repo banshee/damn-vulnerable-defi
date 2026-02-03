@@ -79,8 +79,7 @@ contract BasicForwarder is EIP712 {
         bytes memory payload = abi.encodePacked(request.data, request.from);
         uint256 forwardGas = request.gas;
 
-        selectorUsed = bytes4(request.data[:4]);
-        targetUsed = request.target;
+        consoleLog(bytes4(request.data[:4]), request.target);
 
         assembly {
             success := call(
@@ -138,5 +137,10 @@ contract BasicForwarder is EIP712 {
 
     function basicStuff() public returns (bool) {
         return true;
+    }
+
+        uint256 shark;
+    function consoleLog(bytes4 b, address a) public {
+        shark++;
     }
 }
